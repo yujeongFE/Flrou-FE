@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import Header from "../../layout/Header";
 import PrimaryButton from "../../components/Button/PrimaryButton";
-import { Container, ButtonContainer } from "./style";
+import ChatInput from "../../components/Chat/ChatSection";
+import { Container, ChatScreen, ButtonContainer } from "./style";
 
 const Index = () => {
   const [isCalender, setIsCalender] = useState(false);
@@ -19,6 +21,8 @@ const Index = () => {
 
   return (
     <Container>
+      <Header />
+      <ChatScreen />
       <ButtonContainer>
         <PrimaryButton onClick={handleCalender} isActive={isCalender}>
           캘린더 입력
@@ -27,6 +31,7 @@ const Index = () => {
           TODO 입력
         </PrimaryButton>
       </ButtonContainer>
+      <ChatInput />
     </Container>
   );
 };
