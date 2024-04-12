@@ -1,4 +1,5 @@
 import React from "react";
+import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Splash from "./pages/Splash/index";
 import Chatting from "./pages/Chatting/index";
