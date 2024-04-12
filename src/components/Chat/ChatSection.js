@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
+
 import SendButton from "../../assets/send_button.svg";
 import ActiveSideButton from "../../assets/active_send_button.png";
+
 const InputContainer = styled.div`
   position: relative;
 `;
@@ -38,20 +41,37 @@ const SendIcon = styled.img`
   }
 `;
 
-const ChatInput = () => {
+const ChatInput = ({ onSendMessage }) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const [message, setMessage] = useState("");
+
+  const handleMessageChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const handleSendMessage = () => {
+    if (message.trim() !== "") {
+      onSendMessage(message);
+      setMessage("");
+    }
+  };
 
   return (
     <InputContainer>
-      <StyledInput type="text" placeholder="메시지를 입력하세요..." />
+      <StyledInput type="text" placeholder="메시지를 입력하세요..." value={message} onChange={handleMessageChange} />
       <SendIcon
         src={isHovered ? ActiveSideButton : SendButton}
         alt="send button"
+        onClick={handleSendMessage}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       />
     </InputContainer>
   );
+};
+ChatInput.propTypes = {
+  onSendMessage: PropTypes.func.isRequired,
 };
 
 export default ChatInput;
