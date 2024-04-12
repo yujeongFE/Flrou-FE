@@ -1,10 +1,13 @@
 import React from "react";
 import { Container, Logo, WelcomeButton } from "./style";
 import FLROU from "../../assets/flrou_logo.png";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
   const handleButtonClick = () => {
-    // 로그인 페이지 구현 시 라우팅 작업 예정
+    // 로그인한 경우에만 조건부 라우팅 작업 예정
+    navigate("/chatting");
   };
 
   return (
