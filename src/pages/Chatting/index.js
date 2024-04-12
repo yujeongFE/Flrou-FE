@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../../layout/Header";
 import PrimaryButton from "../../components/Button/PrimaryButton";
 import ChatInput from "../../components/Chat/ChatSection";
+import ChattingBubble from "../../components/Chat/ChattingBubble";
 import { Container, ChatScreen, ButtonContainer } from "./style";
 
 const Index = () => {
@@ -29,6 +30,7 @@ const Index = () => {
     <Container>
       <Header />
       <ChatScreen>
+        <ChattingBubble messages={messages} />
       </ChatScreen>
       <ButtonContainer>
         <PrimaryButton onClick={handleCalender} isActive={isCalender}>
