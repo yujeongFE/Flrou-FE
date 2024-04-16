@@ -59,7 +59,13 @@ const ChatInput = ({ onSendMessage }) => {
 
   return (
     <InputContainer>
-      <StyledInput type="text" placeholder="메시지를 입력하세요..." value={message} onChange={handleMessageChange} />
+      <StyledInput
+        type="text"
+        placeholder="메시지를 입력하세요..."
+        value={message}
+        onChange={handleMessageChange}
+        onKeyPress={handleSendMessage}
+      />
       <SendIcon
         src={isHovered ? ActiveSideButton : SendButton}
         alt="send button"
