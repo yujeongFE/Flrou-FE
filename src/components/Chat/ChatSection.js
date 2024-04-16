@@ -64,7 +64,11 @@ const ChatInput = ({ onSendMessage }) => {
         placeholder="메시지를 입력하세요..."
         value={message}
         onChange={handleMessageChange}
-        onKeyPress={handleSendMessage}
+        onKeyPress={(e) => {
+          if (e.key === "Enter") {
+            handleSendMessage();
+          }
+        }}
       />
       <SendIcon
         src={isHovered ? ActiveSideButton : SendButton}
