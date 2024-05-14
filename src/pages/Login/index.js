@@ -1,16 +1,27 @@
-import React from "react";
-// style
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Logo } from "../Splash/style";
 import { KakaoLoginButton, FlrouLogin } from "./style";
-
-// img
 import FLROU from "../../assets/flrou_logo.png";
 import KaKaoLogo from "../../assets/kakao_logo.png";
+import useKakaoLogin from "../../api/Login/KakaoLogin";
 
 const Index = () => {
-  const handleKaKaoLoginClick = () => {
-   // 카카오 api 호출
+  const { getKakaoCode, userEmail, userId } = useKakaoLogin();
+  const accessToken = localStorage.getItem("accessToken");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // accessToken과 유저 정보가 존재할 때만 채팅 페이지 접근 
+    if (accessToken && userEmail && userId) {
+      navigate("/chatting");
+    }
+  }, [accessToken, navigate]);
+
+  const handleKaKaoLoginClick = async () => {
+    await getKakaoCode();
   };
+
   const handleFlrouLoginClick = () => {
     // 자체 로그인 api 호출
   };
