@@ -46,7 +46,7 @@ const useKakaoLogin = () => {
         const { access_token } = data;
 
         // 토큰을 로컬 스토리지에 저장
-        localStorage.setItem("accessToken", access_token);
+        access_token && localStorage.setItem("accessToken", access_token);
 
         // 유저 정보를 가져오는 함수 호출
         fetchUserInfo(access_token);
