@@ -22,6 +22,7 @@ const Calendar = () => {
   const [toggle, setToggle] = useState(false);
   const [filteredSchedules, setFilteredSchedules] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
 
   // 일정 예시
   useEffect(() => {
@@ -78,8 +79,18 @@ const Calendar = () => {
     setToggle(!toggle);
   };
 
-  const handlePopup = () => {
+  const handlePopup = (schedule) => {
+    setSelectedSchedule(schedule);
     setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+    setSelectedSchedule(null);
+  };
+
+  const saveScheduleColor = (color) => {
+    setSchedules((prevSchedules) => prevSchedules.map((schedule) => (schedule === selectedSchedule ? { ...schedule, color } : schedule)));
   };
 
   return (
@@ -121,7 +132,7 @@ const Calendar = () => {
       <DetailContainer>
         <StyledScheduleContainer>
           {filteredSchedules.map((schedule, index) => (
-            <StyledScheduleDetail key={index} onClick={handlePopup}>
+            <StyledScheduleDetail key={index} onClick={() => handlePopup(schedule)}>
               <span
                 style={{ color: "#A391FF" }}
               >{`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}</span>
@@ -134,7 +145,19 @@ const Calendar = () => {
       </DetailContainer>
       {showPopup && (
         <>
-          <UpdateModal />
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 998,
+            }}
+            onClick={closePopup}
+          />
+          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveScheduleColor} />
         </>
       )}
     </>
