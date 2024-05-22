@@ -92,15 +92,13 @@ const Calendar = () => {
     setShowPopup(false);
   };
 
-  const saveSchedule = (color, startDate, endDate) => {
+  const saveSchedule = (title, color, startDate, endDate) => {
     setSchedules((prevSchedules) =>
       prevSchedules.map((prevSchedule) =>
-        prevSchedule.id === selectedSchedule.id
-          ? { ...prevSchedule, color, startDate, endDate } 
-          : prevSchedule,
+        prevSchedule.id === selectedSchedule.id ? { ...prevSchedule, title, color, startDate, endDate } : prevSchedule,
       ),
     );
-    setShowPopup(false); 
+    setShowPopup(false);
   };
 
   return (

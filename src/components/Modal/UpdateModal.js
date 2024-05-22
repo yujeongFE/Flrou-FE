@@ -9,6 +9,7 @@ import "./DatePicker.css";
 const UpdateModal = ({ schedule, onClose, onSave }) => {
   if (!schedule) return null;
 
+  const [title, setTitle] = useState(schedule.title);
   const [selectedColor, setSelectedColor] = useState(schedule.color);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
@@ -74,6 +75,19 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
     marginRight: "30px",
   };
 
+  const TitleContainer = {
+    ...buttonStyle,
+    fontSize: "15px",
+    fontWeight: "500",
+    marginBottom: "0px",
+    padding: "10px",
+    width: "100%",
+    boxSizing: "border-box",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  };
+
   const ColorContainer = {
     ...buttonStyle,
     marginBottom: "0px",
@@ -96,7 +110,7 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    onSave(selectedColor, selectedStartDate, selectedEndDate);
+    onSave(title, selectedColor, selectedStartDate, selectedEndDate);
     onClose();
   };
 
@@ -105,6 +119,7 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
       <h2 style={{ color: "#708FFE" }}>Update</h2>
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>일정명:</p>
+        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} style={TitleContainer} placeholder="일정명" />
       </div>
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>시작 일시:</p>
