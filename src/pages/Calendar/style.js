@@ -166,13 +166,15 @@ export const StyledCalendarWrapper = styled.div`
     font-weight: bold; /* 텍스트 굵기 */
   }
 
+  /* 선택한 날짜 스타일 적용 */
   .react-calendar__tile--active {
     position: relative; /* 상대 위치 지정 */
     border-radius: 4px; /* 모서리를 둥글게 만들기 */
-    background-color: #FFF8BB; /* 아무 것도 선택되지 않았을 때 오늘 날짜 배경 */
+    background-color: #C7F1F2 !important; /* 변경된 선택한 날짜 배경 */
     color: white;
-    border: 3px solid #2ed4eb;
+    border: 3px solid #2ED4EB;
   }
+  
 `;
 
 export const StyledCalendar = styled(Calendar)``;
@@ -219,13 +221,49 @@ export const StyledSchedule = styled.div`
 `;
 
 export const DetailContainer = styled.div`
-  backgroun-color: #e9f2ff;
-`;
-export const StyledScheduleContainer = styled.div`
+  margin-top: 50px;
+  padding: 50px 0;
   width: 100%;
-  height: 100%;
+  background-color: #e9f2ff;
+  display: flex;
+  justify-content: space-between; /* 텍스트 일렬 정렬 및 일정한 간격 */
+  align-items: center;
+  flex-wrap: wrap; /* 너비를 넘어가면 줄 바꿈 */
+`;
+
+export const StyledScheduleContainer = styled.div`
   display: flex;
   backgroun-color: #e9f2ff;
   flex-direction: column;
   z-index: 1;
+  width: 80%;
+  justify-content: center;
+  margin: auto;
+`;
+
+export const StyledScheduleDetail = styled.div`
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 50px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.3);
+  background-color: #fff;
+  border: 1px solid #a391ff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24px;
+  color: #2c2c2c;
+  span {
+    margin-left: 30px;
+  }
+  img {
+    margin-right: 30px;
+  }
+  z-index: 0;
 `;
