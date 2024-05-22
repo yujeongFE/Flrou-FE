@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import detail_arrow from "../../assets/detail_arrow.png";
 import detail_close_arrow from "../../assets/detail_close_arrow.png";
+import "./DatePicker.css";
 
 const UpdateModal = ({ schedule, onClose, onSave }) => {
   if (!schedule) return null;
 
   const [selectedColor, setSelectedColor] = useState(schedule.color);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
+  const [selectedEndDate, setSelectedEndDate] = useState(new Date(schedule.endDate));
 
   const colors = [
     "#ff4d6d",
@@ -32,6 +37,24 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
     "#f1c0e8",
   ];
 
+  const containerStyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "20px",
+    background: "#fff",
+    position: "fixed",
+    zIndex: 999,
+    width: "400px",
+    height: "auto",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    padding: "30px",
+  };
+
   const buttonStyle = {
     borderRadius: "10px",
     border: "1px solid #84B3FA",
@@ -40,14 +63,14 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
     padding: "10px 20px",
     cursor: "pointer",
-    marginRight: "20px",
-    marginTop: "10px",
+    marginBottom: "15px",
   };
 
   const saveButtonStyle = {
     ...buttonStyle,
     background: "#84B3FA",
     color: "#FFF",
+    marginRight: "30px",
   };
 
   const colorButtonStyle = (color) => ({
@@ -67,33 +90,40 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    onSave(selectedColor);
+    onSave(selectedColor, selectedStartDate, selectedEndDate);
     onClose();
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "20px",
-        background: "#fff",
-        position: "fixed",
-        zIndex: 999,
-        width: "400px",
-        height: "auto",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        padding: "30px",
-      }}
-    >
+    <div style={containerStyle}>
       <h2 style={{ textAlign: "center" }}>{schedule.title}</h2>
-      <p style={{ textAlign: "center" }}>{`시작 일시: ${new Date(schedule.startDate).toLocaleString()}`}</p>
-      <p style={{ textAlign: "center" }}>{`종료 일시: ${new Date(schedule.endDate).toLocaleString()}`}</p>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>시작 일시:</p>
+        <DatePicker
+          selected={selectedStartDate}
+          onChange={(date) => setSelectedStartDate(date)}
+          dateFormat="yyyy-MM-dd HH:mm"
+          selectsStart
+          startDate={selectedStartDate}
+          endDate={selectedEndDate}
+          showTimeInput
+          style={{ marginBottom: "10px", flex: "1" }}
+        />
+      </div>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>종료 일시:</p>
+        <DatePicker
+          selected={selectedEndDate}
+          onChange={(date) => setSelectedEndDate(date)}
+          dateFormat="yyyy-MM-dd HH:mm"
+          selectsEnd
+          startDate={selectedStartDate}
+          endDate={selectedEndDate}
+          minDate={selectedStartDate}
+          showTimeInput
+          style={{ marginBottom: "10px", flex: "1" }}
+        />
+      </div>
       <div style={{ textAlign: "center", margin: "20px 0" }}>
         <div style={{ display: "inline-block", position: "relative", textAlign: "left" }}>
           <button style={{ ...buttonStyle }} onClick={() => setDropdownOpen(!dropdownOpen)}>

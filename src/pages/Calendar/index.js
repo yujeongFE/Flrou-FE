@@ -92,10 +92,15 @@ const Calendar = () => {
     setShowPopup(false);
   };
 
-  const saveScheduleColor = (color) => {
+  const saveSchedule = (color, startDate, endDate) => {
     setSchedules((prevSchedules) =>
-      prevSchedules.map((prevSchedule) => (prevSchedule.id === selectedSchedule.id ? { ...prevSchedule, color } : prevSchedule)),
+      prevSchedules.map((prevSchedule) =>
+        prevSchedule.id === selectedSchedule.id
+          ? { ...prevSchedule, color, startDate, endDate } 
+          : prevSchedule,
+      ),
     );
+    setShowPopup(false); 
   };
 
   return (
@@ -162,7 +167,7 @@ const Calendar = () => {
             }}
             onClick={closePopup}
           />
-          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveScheduleColor} />
+          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveSchedule} />
         </>
       )}
     </>
