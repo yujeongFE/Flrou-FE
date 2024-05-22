@@ -5,6 +5,7 @@ import Splash from "./pages/Splash/index";
 import Login from "./pages/Login/index";
 import Chatting from "./pages/Chatting/index";
 import Calendar from "./pages/Calendar";
+import TodoList from "./pages/TodoList";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/chatting" element={<Chatting />} />
           <Route exact path="/calendar" element={<Calendar />} />
+          <Route exact path="/todo" element={<TodoList />} />
         </Routes>
       </div>
     </Router>
