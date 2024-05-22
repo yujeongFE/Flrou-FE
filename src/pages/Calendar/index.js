@@ -25,34 +25,26 @@ const Calendar = () => {
   useEffect(() => {
     const initialSchedules = [
       {
-        startDate: "2024-05-22",
-        startTime: "10:00",
-        endTime: "15:00",
-        endDate: "2024-05-29",
+        startDate: "2024-05-22 10:00",
+        endDate: "2024-05-29 15:00",
         title: "숙명여자대학교 체육대회",
         color: "#FC819E",
       },
       {
-        startDate: "2024-05-19",
-        startTime: "12:00",
-        endTime: "13:00",
-        endDate: "2024-05-19",
+        startDate: "2024-05-19 12:00",
+        endDate: "2024-05-19 13:00",
         title: "진영이랑 청계천",
         color: "#8DECB4",
       },
       {
-        startDate: "2024-05-16",
-        startTime: "09:00",
-        endTime: "18:00",
-        endDate: "2024-05-23",
+        startDate: "2024-05-16 09:00",
+        endDate: "2024-05-23 18:00",
         title: "고려대 축제",
         color: "#DCBFFF",
       },
       {
-        startDate: "2024-05-17",
-        startTime: "20:00",
-        endTime: "22:00",
-        endDate: "2024-05-17",
+        startDate: "2024-05-17 20:00",
+        endDate: "2024-05-17 22:00",
         title: "민영이랑 안양에서 번개",
         color: "#FFC6AC",
       },
@@ -124,7 +116,10 @@ const Calendar = () => {
         <StyledScheduleContainer>
           {filteredSchedules.map((schedule, index) => (
             <StyledScheduleDetail key={index}>
-              <span style={{ color: "#A391FF" }}>{`${schedule.startTime} ~ ${schedule.endTime}`}</span>
+              <span
+                style={{ color: "#A391FF" }}
+              >{`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}</span>
+
               <span>{schedule.title}</span>
               <img src={toggle ? toggle_on : toggle_off} alt="토클 활성화" onClick={handleToggle} />
             </StyledScheduleDetail>
