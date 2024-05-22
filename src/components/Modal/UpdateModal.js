@@ -53,6 +53,7 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
     transform: "translate(-50%, -50%)",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     padding: "30px",
+    gap: "10px",
   };
 
   const buttonStyle = {
@@ -63,7 +64,7 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
     padding: "10px 20px",
     cursor: "pointer",
-    marginBottom: "15px",
+    marginTop: "10px",
   };
 
   const saveButtonStyle = {
@@ -71,6 +72,11 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
     background: "#84B3FA",
     color: "#FFF",
     marginRight: "30px",
+  };
+
+  const ColorContainer = {
+    ...buttonStyle,
+    marginBottom: "0px",
   };
 
   const colorButtonStyle = (color) => ({
@@ -96,7 +102,10 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
 
   return (
     <div style={containerStyle}>
-      <h2 style={{ textAlign: "center" }}>{schedule.title}</h2>
+      <h2 style={{ color: "#708FFE" }}>Update</h2>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>일정명:</p>
+      </div>
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>시작 일시:</p>
         <DatePicker
@@ -124,9 +133,10 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
           style={{ marginBottom: "10px", flex: "1" }}
         />
       </div>
-      <div style={{ textAlign: "center", margin: "20px 0" }}>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>색상명:</p>
         <div style={{ display: "inline-block", position: "relative", textAlign: "left" }}>
-          <button style={{ ...buttonStyle }} onClick={() => setDropdownOpen(!dropdownOpen)}>
+          <button style={{ ...ColorContainer, background: selectedColor || "#FFF" }} onClick={() => setDropdownOpen(!dropdownOpen)}>
             색상 선택
             <img src={dropdownOpen ? detail_close_arrow : detail_arrow} style={{ marginLeft: "10px" }} alt="자세히 보기" />
           </button>
