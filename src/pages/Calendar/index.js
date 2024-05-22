@@ -12,6 +12,7 @@ import {
 } from "./style";
 import toggle_on from "../../assets/toggle_on.png";
 import toggle_off from "../../assets/toggle_off.png";
+import UpdateModal from "../../components/Modal/UpdateModal";
 
 const Calendar = () => {
   const today = new Date();
@@ -20,6 +21,7 @@ const Calendar = () => {
   const [schedules, setSchedules] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [filteredSchedules, setFilteredSchedules] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   // 일정 예시
   useEffect(() => {
@@ -76,6 +78,10 @@ const Calendar = () => {
     setToggle(!toggle);
   };
 
+  const handlePopup = () => {
+    setShowPopup(true);
+  };
+
   return (
     <>
       <Container>
@@ -115,7 +121,7 @@ const Calendar = () => {
       <DetailContainer>
         <StyledScheduleContainer>
           {filteredSchedules.map((schedule, index) => (
-            <StyledScheduleDetail key={index}>
+            <StyledScheduleDetail key={index} onClick={handlePopup}>
               <span
                 style={{ color: "#A391FF" }}
               >{`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}</span>
@@ -126,6 +132,11 @@ const Calendar = () => {
           ))}
         </StyledScheduleContainer>
       </DetailContainer>
+      {showPopup && (
+        <>
+          <UpdateModal />
+        </>
+      )}
     </>
   );
 };
