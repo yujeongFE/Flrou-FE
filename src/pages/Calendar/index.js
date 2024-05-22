@@ -28,24 +28,28 @@ const Calendar = () => {
   useEffect(() => {
     const initialSchedules = [
       {
+        id: 1,
         startDate: "2024-05-22 10:00",
         endDate: "2024-05-29 15:00",
         title: "숙명여자대학교 체육대회",
         color: "#FC819E",
       },
       {
+        id: 2,
         startDate: "2024-05-19 12:00",
         endDate: "2024-05-19 13:00",
         title: "진영이랑 청계천",
         color: "#8DECB4",
       },
       {
+        id: 3,
         startDate: "2024-05-16 09:00",
         endDate: "2024-05-23 18:00",
         title: "고려대 축제",
         color: "#DCBFFF",
       },
       {
+        id: 4,
         startDate: "2024-05-17 20:00",
         endDate: "2024-05-17 22:00",
         title: "민영이랑 안양에서 번개",
@@ -86,11 +90,12 @@ const Calendar = () => {
 
   const closePopup = () => {
     setShowPopup(false);
-    setSelectedSchedule(null);
   };
 
   const saveScheduleColor = (color) => {
-    setSchedules((prevSchedules) => prevSchedules.map((schedule) => (schedule === selectedSchedule ? { ...schedule, color } : schedule)));
+    setSchedules((prevSchedules) =>
+      prevSchedules.map((prevSchedule) => (prevSchedule.id === selectedSchedule.id ? { ...prevSchedule, color } : prevSchedule)),
+    );
   };
 
   return (
