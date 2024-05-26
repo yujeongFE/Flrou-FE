@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const useKakaoLogin = () => {
+  const [userName, setUserName] = useState(""); // 유저 이름
   const [userEmail, setUserEmail] = useState(""); // 유저 이메일
   const [userId, setUserId] = useState(""); // 유저 아이디
 
@@ -64,6 +65,7 @@ const useKakaoLogin = () => {
       });
 
       const data = response.data;
+      setUserName(data.kakao_account.profile.nickname);
       setUserEmail(data.kakao_account.email);
       setUserId(data.id);
     } catch (error) {
@@ -72,6 +74,7 @@ const useKakaoLogin = () => {
   };
 
   return {
+    userName,
     userEmail,
     userId,
     getKakaoCode,
