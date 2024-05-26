@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 import Button from "../assets/sidebar_button.png";
 import Bell from "../assets/bell.svg";
+
+import HeaderMenu from "../components/Link/HeadMenu";
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -11,6 +13,7 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 `;
 
 const FlexContainer = styled.div`
@@ -23,6 +26,7 @@ const SideBarButton = styled.img`
   height: 3.2vh;
   min-width: 30px;
   min-height: 21px;
+  cursor: pointer;
 `;
 
 const LogoText = styled.span`
@@ -46,10 +50,31 @@ const BellButton = styled.img`
   min-height: 24px;
 `;
 
+const SidebarContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: ${({ isOpen }) => (isOpen ? "-50px" : "-250px")};
+  height: 100vh;
+  width: 0px;
+  background-color: #fefdfd;
+  z-index: 999;
+  transition: transform 0.5s;
+  transform: translateX(${({ isOpen }) => (isOpen ? "0" : "-100%")});
+`;
+
 const Header = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <HeaderContainer>
-      <SideBarButton src={Button} alt={"sidebar button"} />
+      <SidebarContainer isOpen={isSidebarOpen}>
+        <HeaderMenu isOpen={isSidebarOpen} setOpen={setSidebarOpen} />
+      </SidebarContainer>
+      <SideBarButton src={Button} alt={"sidebar button"} onClick={toggleSidebar} />
       <FlexContainer>
         <LogoText>FLROU</LogoText>
       </FlexContainer>
