@@ -34,6 +34,7 @@ const Index = () => {
   const resetState = () => {
     setNickName("");
     setEmail("");
+    setConfirmPassword("");
     setPassword("");
   };
 
@@ -62,8 +63,10 @@ const Index = () => {
 
   const handleLogin = async () => {
     try {
-      await LoginRequest(email, password);
+      const response = await LoginRequest(email, password);
       setShowLoginModal(false);
+      // 로그인 성공 시 응답에서 받은 사용자 아이디를 localStorage에 저장
+      localStorage.setItem("user_id", response.data.user_id);
       navigate("/chatting");
     } catch (error) {
       console.error("로그인 요청 실패:", error);
@@ -85,7 +88,6 @@ const Index = () => {
         } else if (response.data === "success") {
           // 회원가입 성공일 경우
           setShowSignupModal(false);
-          navigate("/chatting");
         } else if (response.data === "failed") {
           // 회원가입 실패일 경우
           setSignupAlert("회원가입에 실패했습니다.");
