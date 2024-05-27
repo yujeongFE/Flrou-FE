@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Logo } from "../Splash/style";
 import { KakaoLoginButton, FlrouLogin } from "./style";
@@ -11,8 +11,7 @@ import { LoginRequest } from "../../components/api/Login/LoginRequest";
 import { SignUpRequest } from "../../components/api/Login/SignUpRequest";
 
 const Index = () => {
-  const { getKakaoCode, userEmail, userId, userkName } = useKakaoLogin();
-  const accessToken = localStorage.getItem("accessToken");
+  const { getKakaoCode } = useKakaoLogin();
   const navigate = useNavigate();
 
   // 모달 표시를 위한 상태
@@ -24,13 +23,6 @@ const Index = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signupAlert, setSignupAlert] = useState("");
 
-  useEffect(() => {
-    // accessToken과 유저 정보가 존재할 때만 채팅 페이지로 이동
-    if (accessToken && userEmail && userId) {
-      navigate("/chatting");
-    }
-  }, [accessToken, userEmail, userId, navigate]);
-
   const resetState = () => {
     setNickName("");
     setEmail("");
@@ -41,10 +33,6 @@ const Index = () => {
   const handleKaKaoLoginClick = async () => {
     try {
       await getKakaoCode();
-      setNickName(userkName);
-      setEmail(userEmail);
-      setPassword("1234"); // 고정적인 패스워드 지정
-      SignUpRequest(nickName, email, password);
     } catch (error) {
       console.error("로그인 요청 실패:", error);
     }
