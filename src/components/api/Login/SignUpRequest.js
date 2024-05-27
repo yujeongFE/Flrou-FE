@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export const SignUpRequest = async (userId, userPw, nickName) => {
+export const SignUpRequest = async (nickName, userId, userPw) => {
   try {
     const response = await axios.post("http://localhost:3000/user/signup", {
+      nickname: nickName,
       user_id: userId,
       user_pw: userPw,
-      nickname: nickName,
     });
     console.log(response);
     return response;
