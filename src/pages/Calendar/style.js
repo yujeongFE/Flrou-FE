@@ -13,9 +13,10 @@ export const StyledCalendarWrapper = styled.div`
   width: 80%;
   height: auto;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end; /* 수정된 부분 */
   position: relative;
-  margin: 10px auto; 
+  margin: 10px auto;
+  overflow-y: hidden; /* 수정된 부분 */
   .react-calendar {
     width: 100%;
     border: none;
@@ -28,7 +29,7 @@ export const StyledCalendarWrapper = styled.div`
   /* 전체 폰트 컬러 */
   .react-calendar__month-view {
     abbr {
-      color: #2C2C2C;
+      color: #2c2c2c;
       font-family: "Noto Sans KR";
       font-size: 20px;
       font-style: normal;
@@ -37,19 +38,30 @@ export const StyledCalendarWrapper = styled.div`
     }
   }
 
+  .react-calendar__month-view__days__day {
+    flex: 0 0 calc(14.2857% - 4px); /* 한 줄에 7개의 날짜가 들어가도록 설정 */
+    max-width: calc(14.2857% - 4px); /* 한 줄에 7개의 날짜가 들어가도록 설정 */
+  }
+
   /* 요일 제목 텍스트 스타일 */
-    .react-calendar__month-view__weekdays abbr {
-      color: #2c2c2c;
-      font-family: "Noto Sans KR";
-      font-size: 25px;
-      font-style: normal;
-      font-weight: 200; 
-      line-height: 20px;
-    }
+  .react-calendar__month-view__weekdays abbr {
+    color: #2c2c2c;
+    font-family: "Noto Sans KR";
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 200;
+    line-height: 20px;
+  }
+
+  /* 날짜를 일렬로 정렬 */
+  .react-calendar__month-view__days {
+    display: grid; /* 그리드 레이아웃으로 변경 */
+    grid-template-columns: repeat(7, 1fr); /* 7개의 열을 가지도록 설정 */
+    gap: 2px; /* 각 셀 사이의 간격 설정 */
   }
 
   /* 토요일에만 빨간색으로 */
-  .react-calendar__month-view__weekdays__weekday--weekend abbr[title="토요일"]{
+  .react-calendar__month-view__weekdays__weekday--weekend abbr[title="토요일"] {
     color: blue;
   }
   /* 일요일에만 빨간색으로 */
@@ -60,9 +72,8 @@ export const StyledCalendarWrapper = styled.div`
   /* 네비게이션 오른쪽 정렬 */
   .react-calendar__navigation {
     justify-content: flex-end;
-    position: relative; 
+    position: relative;
   }
-  
 
   /* 네비게이션 폰트 설정 */
   .react-calendar__navigation button {
@@ -91,19 +102,19 @@ export const StyledCalendarWrapper = styled.div`
   }
 
   .react-calendar__navigation::after {
-    content: '';
+    content: "";
     position: absolute;
     margin-top: 45px;
     left: 0;
     width: 100%;
     height: 1px;
-    background-color:#E8E8E8;
+    background-color: #e8e8e8;
   }
 
   /* 요일 밑줄 제거 */
   .react-calendar__month-view__weekdays abbr {
     text-decoration: none;
-    font-weight: 800;
+    font-weight: 200;
   }
 
   /* 네비게이션 월 스타일 적용 */
@@ -116,6 +127,11 @@ export const StyledCalendarWrapper = styled.div`
     font-weight: 100;
     line-height: 20px;
     padding: 0;
+  }
+  .react-calendar__tile {
+    text-align: flex-start;
+    align-items: flex-start; /* 텍스트 위로 정렬 */
+    min-height: 50px;
   }
 
   /* 네비게이션 현재 월 스타일 적용 */
@@ -131,6 +147,7 @@ export const StyledCalendarWrapper = styled.div`
     padding: 10px 0px 5px;
     position: relative;
     height: 100px;
+    font-align: center;
   }
 
   /* 네비게이션 월 스타일 적용 */
@@ -150,15 +167,16 @@ export const StyledCalendarWrapper = styled.div`
     padding: 0;
   }
 
-  /* 오늘 날짜 스타일 적용 */ 
+  /* 오늘 날짜 스타일 적용 */
   .react-calendar__tile--now {
-    background-color: #FFFBD2;
-  }  
+    background-color: #fffbd2;
+  }
 
   /* 선택한 날짜 스타일 적용 */
-  .react-calendar__tile:enabled:hover{
+  .react-calendar__tile:enabled:hover {
     background-color: #c7f1f2;
-  },
+  }
+  ,
   .react-calendar__tile:enabled:focus,
   /* 활성화된 날짜 텍스트에 대한 스타일 */
   .react-calendar__tile--active abbr {
@@ -170,11 +188,10 @@ export const StyledCalendarWrapper = styled.div`
   .react-calendar__tile--active {
     position: relative; /* 상대 위치 지정 */
     border-radius: 4px; /* 모서리를 둥글게 만들기 */
-    background-color: #C7F1F2 !important; /* 변경된 선택한 날짜 배경 */
+    background-color: #c7f1f2 !important; /* 변경된 선택한 날짜 배경 */
     color: white;
-    border: 3px solid #2ED4EB;
+    border: 3px solid #2ed4eb;
   }
-  
 `;
 
 export const StyledCalendar = styled(Calendar)``;
@@ -211,10 +228,9 @@ export const StyledSchedule = styled.div`
   height: 15px;
   display: flex;
   align-items: center;
-
+  width: 100%;
   /* 일정 상자 내용에 대한 스타일 */
   font-size: 12px;
-  overflow: hidden; /* 내용이 넘칠 경우 숨김 처리 */
   text-overflow: ellipsis; /* 내용이 넘칠 경우 생략 부호(...)로 표시 */
   white-space: nowrap;
   margin-top: 2px;
@@ -246,7 +262,7 @@ export const StyledScheduleDetail = styled.div`
   align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
-  width: 100%;
+  width: 80%;
   height: 50px;
   border-radius: 100px;
   background: rgba(255, 255, 255, 0.3);
