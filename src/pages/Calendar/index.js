@@ -33,20 +33,30 @@ const Calendar = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await GetPlanRequest(id, "2024", "5");
+        const responseCurrentMonth = await GetPlanRequest(id, moment(date).format("YYYY"), moment(date).format("M"));
 
-        if (!Array.isArray(response)) {
+        if (!Array.isArray(responseCurrentMonth)) {
           console.error("데이터가 배열이 아닙니다.");
           return;
         }
 
-        const secondFormatDataArray = response.map((item) => ({
+        const nextMonth = moment(date).add(1, "month");
+        const responseNextMonth = await GetPlanRequest(id, nextMonth.format("YYYY"), nextMonth.format("M"));
+
+        if (!Array.isArray(responseNextMonth)) {
+          console.error("데이터가 배열이 아닙니다.");
+          return;
+        }
+
+        const allSchedules = responseCurrentMonth.concat(responseNextMonth);
+
+        const secondFormatDataArray = allSchedules.map((item) => ({
           id: item.id,
           startDate: `${item.s_year}-${item.s_month}-${item.s_day} ${item.s_hour}:${item.s_minute}`,
           endDate: `${item.f_year}-${item.f_month}-${item.f_day} ${item.f_hour}:${item.f_minute}`,
           title: item.plan,
           color: getColorByNumber(item.color),
-          isDone: item.isDone, // 완료 여부 추가
+          isDone: item.isDone,
         }));
 
         setSchedules(secondFormatDataArray);
@@ -56,7 +66,7 @@ const Calendar = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [date]);
 
   useEffect(() => {
     if (filteredSchedules.length === 0) {
