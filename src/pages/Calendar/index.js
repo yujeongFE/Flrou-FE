@@ -299,7 +299,7 @@ const Calendar = () => {
             }}
             onClick={closePopup}
           />
-          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveSchedule} />
+          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveSchedule} isPopup={true} />
         </>
       )}
     </>
