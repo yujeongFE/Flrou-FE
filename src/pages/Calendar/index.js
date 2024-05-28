@@ -15,6 +15,9 @@ import toggle_off from "../../assets/toggle_off.png";
 import UpdateModal from "../../components/Modal/UpdateModal";
 import { GetPlanRequest } from "../../components/api/Plan/GetPlanRequest";
 import { UpdatePlanRequest } from "../../components/api/Plan/UpdatePlanRequest";
+import { UpdatePlanDone } from "../../components/api/Plan/CompletePlanRequest";
+import { DeletePlanRequest } from "../../components/api/Plan/DeletePlanRequest";
+import xbutton from "../../assets/x_button.png";
 
 const Calendar = () => {
   const today = new Date();
@@ -43,6 +46,7 @@ const Calendar = () => {
           endDate: `${item.f_year}-${item.f_month}-${item.f_day} ${item.f_hour}:${item.f_minute}`,
           title: item.plan,
           color: getColorByNumber(item.color),
+          isDone: item.isDone, // 완료 여부 추가
         }));
 
         setSchedules(secondFormatDataArray);
@@ -110,24 +114,82 @@ const Calendar = () => {
     setDate(newDate);
   };
 
-  const handleToggle = () => {
-    setToggle(!toggle);
+  const handleCompleteToggle = async (scheduleId) => {
+    try {
+      // 완료 여부 토글
+      const updatedSchedules = schedules.map((schedule) =>
+        schedule.id === scheduleId ? { ...schedule, isDone: !schedule.isDone } : schedule,
+      );
+      setSchedules(updatedSchedules);
+
+      // 완료 여부 업데이트 API 호출
+      await UpdatePlanDone(scheduleId);
+    } catch (error) {
+      console.error("완료 여부를 업데이트하는 중 오류 발생:", error);
+    }
   };
 
   const handlePopup = (schedule) => {
     setSelectedSchedule(schedule);
-    console.log(schedule.id);
     setShowPopup(true);
   };
 
   const closePopup = () => {
     setShowPopup(false);
+    // 팝업이 닫힐 때 토글 이미지를 업데이트
+    if (selectedSchedule) {
+      const updatedSchedules = schedules.map((schedule) =>
+        schedule.id === selectedSchedule.id ? { ...schedule, isDone: selectedSchedule.isDone } : schedule,
+      );
+      setSchedules(updatedSchedules);
+    }
   };
 
-  const saveSchedule = async (color, title, startDate, endDate, notificationInterval, selectedColor) => {
+  const [toggleStates, setToggleStates] = useState([]);
+
+  useEffect(() => {
+    if (schedules.length > 0) {
+      // 스케줄이 로드된 후에 토글 상태 배열 초기화
+      const initialToggleStates = schedules.map((schedule) => schedule.isDone);
+      setToggleStates(initialToggleStates);
+
+      // isDone이 true인 스케줄에 대해서는 토글 상태를 업데이트
+      const updatedToggleStates = initialToggleStates.map((isDone) => (isDone ? true : false));
+      setToggle(updatedToggleStates);
+    }
+  }, [schedules]);
+
+  const handleToggle = async (scheduleId) => {
+    try {
+      const updatedToggleStates = toggleStates.map((state, index) => (index === scheduleId ? !state : state));
+      setToggleStates(updatedToggleStates);
+
+      // 스케줄의 완료 여부 업데이트 API 호출
+      await UpdatePlanDone(scheduleId);
+    } catch (error) {
+      console.error("완료 여부를 업데이트하는 중 오류 발생:", error);
+    }
+  };
+
+  const handleDelete = async (index) => {
+    try {
+      const scheduleId = filteredSchedules[index].id;
+      await DeletePlanRequest(scheduleId);
+
+      const updatedSchedules = schedules.filter((schedule) => schedule.id !== scheduleId);
+      setSchedules(updatedSchedules);
+
+      const updatedFilteredSchedules = filteredSchedules.filter((schedule) => schedule.id !== scheduleId);
+      setFilteredSchedules(updatedFilteredSchedules);
+    } catch (error) {
+      console.error("일정을 삭제하는 중 오류 발생:", error);
+    }
+  };
+
+  const saveSchedule = async (color, title, startDate, endDate, notificationInterval, s_color) => {
     try {
       const id = selectedSchedule.id;
-      const s_color = getColorByNumber(color);
+      const notification = notificationInterval === null ? 15 : notificationInterval;
       await UpdatePlanRequest(
         id,
         title,
@@ -141,7 +203,7 @@ const Calendar = () => {
         endDate.getDate(),
         endDate.getHours(),
         endDate.getMinutes(),
-        15,
+        notification,
         s_color,
       );
 
@@ -184,7 +246,12 @@ const Calendar = () => {
               );
 
               return matchingSchedules.map((matchingSchedule, index) => (
-                <StyledSchedule color={matchingSchedule.color} key={index}>
+                <StyledSchedule
+                  color={matchingSchedule.color}
+                  key={index}
+                  onClick={() => handleCompleteToggle(matchingSchedule.id)} // 스케줄을 클릭하면 완료 여부 토글
+                  completed={matchingSchedule.isDone} // 완료 여부에 따라 스타일 변경
+                >
                   {`${matchingSchedule.title}`}
                 </StyledSchedule>
               ));
@@ -195,13 +262,15 @@ const Calendar = () => {
       <DetailContainer>
         <StyledScheduleContainer>
           {filteredSchedules.map((schedule, index) => (
-            <StyledScheduleDetail key={index} onClick={() => handlePopup(schedule)}>
-              <span
-                style={{ color: "#A391FF" }}
-              >{`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}</span>
-
-              <span>{schedule.title}</span>
-              <img src={toggle ? toggle_on : toggle_off} alt="토클 활성화" onClick={handleToggle} />
+            <StyledScheduleDetail key={index} style={{ marginBottom: "10px" }}>
+              <div style={{ alignItems: "center" }} onClick={() => handlePopup(schedule)}>
+                <span style={{ color: "#A391FF" }}>
+                  {`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}
+                </span>
+                <span style={{ width: "100px", marginLeft: "50px" }}>{schedule.title}</span>
+              </div>
+              <img src={xbutton} alt="일정 삭제하기" style={{ marginLeft: "50px" }} onClick={() => handleDelete(index)} />
+              <img src={toggleStates[index] ? toggle_on : toggle_off} alt="토클 활성화" onClick={() => handleToggle(index)} />
             </StyledScheduleDetail>
           ))}
         </StyledScheduleContainer>

@@ -5,7 +5,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import detail_arrow from "../../assets/detail_arrow.png";
 import detail_close_arrow from "../../assets/detail_close_arrow.png";
 import "./DatePicker.css";
-import { UpdatePlanRequest } from "../api/Plan/UpdatePlanRequest";
 
 const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
   if (!schedule) return null;
@@ -16,7 +15,6 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
   const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date(schedule.endDate));
   const [notificationInterval, setNotificationInterval] = useState(null);
-  const id = localStorage.getItem("user_id");
 
   const colors = [
     "#ff4d6d",
@@ -126,34 +124,8 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
   };
 
   const handleSave = () => {
-    onSave(selectedColor, title, selectedStartDate, selectedEndDate, notificationInterval, selectedColor);
     const s_color = getColorIndexByHashCode(selectedColor, colors);
-    // 일정 수정
-    if (isPopup) {
-      // 조건문으로 변경
-      UpdatePlanRequest(
-        id,
-        title,
-        schedule.s_year,
-        schedule.s_month,
-        schedule.s_day,
-        schedule.s_hour,
-        schedule.s_minute,
-        schedule.f_year,
-        schedule.f_month,
-        schedule.f_day,
-        schedule.f_hour,
-        schedule.f_minute,
-        s_color,
-        schedule.aleram,
-      )
-        .then(() => {
-          onClose();
-        })
-        .catch((error) => {
-          console.error("일정 수정 실패:", error);
-        });
-    }
+    onSave(selectedColor, title, selectedStartDate, selectedEndDate, notificationInterval, s_color);
   };
 
   return (
