@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { SignUpRequest } from "../../components/api/Login/SignUpRequest";
+import { useNavigate } from "react-router-dom";
 
 const useKakaoLogin = () => {
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState(""); // 유저 이름
   const [userEmail, setUserEmail] = useState(""); // 유저 이메일
   const [userId, setUserId] = useState(""); // 유저 아이디
+  const [success, setSuccess] = useState(false); // 회원가입 성공 여부
 
   const CLIENT_ID = process.env.REACT_APP_KAKAO_APP_KEY;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URL;
@@ -64,16 +69,33 @@ const useKakaoLogin = () => {
       });
 
       const data = response.data;
+      setUserName(data.kakao_account.profile.nickname);
       setUserEmail(data.kakao_account.email);
       setUserId(data.id);
+
+      // 여기서 우리 서버로 회원가입 요청 보내기
+      const signupResponse = await SignUpRequest(data.kakao_account.profile.nickname, data.id, "1234");
+      if (signupResponse.data == "success") {
+        setSuccess(true);
+        navigate("/chatting");
+        localStorage.setItem("user_id", data.kakao_account.email);
+      } else if (signupResponse.data == "duplicated user_id") {
+        setSuccess(true);
+        navigate("/chatting");
+        localStorage.setItem("user_id", data.kakao_account.email);
+      } else {
+        alert("카카오 회원가입/ 로그인에 실패했습니다.");
+      }
     } catch (error) {
       console.error("Kakao user info error:", error);
     }
   };
 
   return {
+    userName,
     userEmail,
     userId,
+    success,
     getKakaoCode,
   };
 };
