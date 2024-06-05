@@ -96,16 +96,6 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
     }
   }, [plan]);
 
-  useEffect(() => {
-    if (success) {
-      const replyMessage = {
-        text: "일정 등록이 완료되었습니다",
-        isMine: false,
-      };
-      setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
-    }
-  }, [success]);
-
   const handleSave = async (selectedColor, title) => {
     const colors = [
       "#ff4d6d",
@@ -157,11 +147,13 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
         s_color,
       );
 
-      if (response === "success") {
+      if (response.data === "success") {
+        console.log("성공");
+        alert("일정이 등록되었습니다!");
         // 등록 완료 메시지 추가
         setSuccess(true);
         const replyMessage = {
-          text: "일정 등록이 완료되었습니다",
+          text: "캘린더에 일정 등록이 완료되었습니다!",
           isMine: false,
         };
         setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
@@ -198,13 +190,15 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
                     <UpdateModalContainer key={index}>
                       <UpdateModal schedule={selectedSchedule} onClose={toggleUpdateModal} onSave={handleSave} isPopup={false} />
                     </UpdateModalContainer>
+                    {success && (
+                      <OpponentMessageContainer>
+                        <CharacterImage src={Character} alt="character" />
+                        <OpponentMessageBubble style={{ marginTop: "500px", left: "-100px" }} isMine={false}>
+                          {"일정 등록이 완료되었습니다"}
+                        </OpponentMessageBubble>
+                      </OpponentMessageContainer>
+                    )}
                   </div>
-                  {success && (
-                    <OpponentMessageContainer>
-                      <CharacterImage src={Character} alt="character" />
-                      <OpponentMessageBubble isMine={false}>{"일정 등록이 완료되었습니다"}</OpponentMessageBubble>
-                    </OpponentMessageContainer>
-                  )}
                 </OpponentMessageContainer>
               </>
             ),
@@ -226,7 +220,7 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
             ) : (
               <OpponentMessageContainer key={index}>
                 <CharacterImage src={Character} alt="character" />
-                <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
+                <OpponentMessageBubble isMine={false}>{`Todo 작성이 완료되었습니다~`}</OpponentMessageBubble>
               </OpponentMessageContainer>
             ),
           )}
