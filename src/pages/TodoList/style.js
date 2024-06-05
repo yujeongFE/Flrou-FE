@@ -22,6 +22,17 @@ export const TodoSubject = styled.div`
   letter-spacing: 1.28px;
   color: #77ADFD;
   -webkit-text-stroke: 3px white;
+
+  div {
+    margin: 0 20px 0 20px;
+  }
+`
+export const TodoArraow = styled.span`
+  cursor: pointer;
+  color: ${(col) => { return col.col; }};
+  &:hover {
+    transform: scale(107%);
+  }
 `
 
 export const TodoContainer = styled.div`
@@ -37,7 +48,8 @@ export const TodoList = styled.div`
   width: 100%;
   /* height: 6vh; */
   background-color: white;
-  border: 2px solid #77ADFD;
+  /* border: 2px solid #77ADFD; */
+  border: ${(col) => { return `2px solid ${col.col}`; }};
   border-radius: 12px;
   margin: 0 0 20px 0;
   padding: 20px;
@@ -45,7 +57,7 @@ export const TodoList = styled.div`
   display: flex; justify-content: center; align-items: center;
 
   &:hover {
-    box-shadow: 0 2px 8px #77ADFD;
+    box-shadow: 0 2px 8px ${(col) => { return col.col}};
     cursor: pointer;
   }
 `
@@ -57,6 +69,14 @@ export const TodoContent = styled.div`
   display: flex; align-items: center;
   padding: 0 20px 0 10px;
   overflow: hidden;
+
+  input {
+    width: 100%; height: 100%;
+    margin: 0; padding: 0;
+    border: none;
+    outline: none;
+    font-size: 20px;
+  }
 `
 
 export const TodoButton = styled.div`
@@ -72,4 +92,21 @@ export const TodoButton = styled.div`
     transform: scale(107%);
    }
   }
+`
+export const TodoButton2 = styled.div`
+    width: 40px;
+    height: 40px;
+    display: flex; justify-content: center; align-items: center;
+    text-shadow: 0px 4px 4px gray;
+    font-size: 34px;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    color: ${(col) => { return col.col}};
+    -webkit-text-stroke: 2px white;
+    font-family: Coiny;
+
+    &:hover {
+      transform: scale(107%);
+    }
 `

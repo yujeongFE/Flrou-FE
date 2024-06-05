@@ -6,7 +6,7 @@ import detail_arrow from "../../assets/detail_arrow.png";
 import detail_close_arrow from "../../assets/detail_close_arrow.png";
 import "./DatePicker.css";
 
-const UpdateModal = ({ schedule, onClose, onSave }) => {
+const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
   if (!schedule) return null;
 
   const [title, setTitle] = useState(schedule.title);
@@ -14,6 +14,7 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date(schedule.endDate));
+  const [notificationInterval, setNotificationInterval] = useState(null);
 
   const colors = [
     "#ff4d6d",
@@ -41,19 +42,19 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
   const containerStyle = {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "20px",
+    alignItems: isPopup ? "center" : "",
+    justifyContent: isPopup ? "center" : "",
+    borderRadius: "10px",
     background: "#fff",
-    position: "fixed",
     zIndex: 999,
-    width: "400px",
+    width: isPopup ? "350px" : "250px",
     height: "auto",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
+    position: isPopup ? "fixed" : "absolute",
+    top: isPopup ? "50%" : "0%",
+    left: isPopup ? "50%" : "0%",
+    transform: isPopup ? "translate(-50%, -50%)" : "-",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    padding: "30px",
+    padding: "10px",
     gap: "10px",
   };
 
@@ -106,17 +107,30 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
 
   const handleColorSelect = (color) => {
     setSelectedColor(color === selectedColor ? "" : color); // 같은 색상 버튼을 다시 클릭하면 선택 해제
+    console.log(color);
     setDropdownOpen(false);
   };
 
+  const handleNotificationIntervalChange = (event) => {
+    setNotificationInterval(parseInt(event.target.value));
+  };
+
+  const getColorIndexByHashCode = (hashCode, colors) => {
+    // 해시코드가 배열에 포함되어 있는지 확인
+    const index = colors.indexOf(hashCode);
+
+    // 포함되어 있다면 인덱스 반환, 아니면 -1 반환
+    return index !== -1 ? index : -1;
+  };
+
   const handleSave = () => {
-    onSave(title, selectedColor, selectedStartDate, selectedEndDate);
-    onClose();
+    const s_color = getColorIndexByHashCode(selectedColor, colors);
+    onSave(selectedColor, title, selectedStartDate, selectedEndDate, notificationInterval, s_color);
   };
 
   return (
     <div style={containerStyle}>
-      <h2 style={{ color: "#708FFE" }}>Update</h2>
+      {isPopup && <h2 style={{ color: "#708FFE" }}>Update</h2>}
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>일정명:</p>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} style={TitleContainer} placeholder="일정명" />
@@ -180,6 +194,15 @@ const UpdateModal = ({ schedule, onClose, onSave }) => {
           )}
         </div>
       </div>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
+        <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>알림 설정:</p>
+        <select value={notificationInterval} onChange={handleNotificationIntervalChange} style={ColorContainer}>
+          <option value={15}>15분</option>
+          <option value={30}>30분</option>
+          <option value={45}>45분</option>
+          <option value={60}>1시간</option>
+        </select>
+      </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button style={saveButtonStyle} onClick={handleSave}>
           일정 수정
@@ -196,6 +219,7 @@ UpdateModal.propTypes = {
   schedule: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
+  isPopup: PropTypes.bool,
 };
 
 export default UpdateModal;
