@@ -9,7 +9,7 @@ import btn1 from "../../assets/todo_btn_1.png";
 import btn2 from "../../assets/todo_btn_2.png";
 
 const Index = () => {
-  let user_id = '111';
+  const user_id = localStorage.getItem('user_id');
 
   // 투두 리스트
   const [todoList, setTodoList] = useState(null);
