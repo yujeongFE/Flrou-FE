@@ -10,6 +10,11 @@ import { ModalOverlay, ModalContent, ModalTitle, ModalInput, ModalButton, ModalT
 import { LoginRequest } from "../../components/api/Login/LoginRequest";
 import { SignUpRequest } from "../../components/api/Login/SignUpRequest";
 
+// FCM
+import { messaging, getToken } from "../../core/notification/firebase.config.mjs";
+import { registerServiceWorker } from "../../utils/notification";
+import axios from "axios";
+
 const Index = () => {
   const { getKakaoCode } = useKakaoLogin();
   const navigate = useNavigate();
@@ -55,7 +60,20 @@ const Index = () => {
       setShowLoginModal(false);
       // 로그인 성공 시 응답에서 받은 사용자 아이디를 localStorage에 저장
       localStorage.setItem("user_id", response.data.user_id);
-      navigate("/chatting");
+
+      // fcm device token 요청
+      const token = await getToken(messaging, {
+        vapidKey: process.env.REACT_APP_VAPID_KEY,
+      });
+      if(token) {
+        // DB에 토큰 저장
+        const res = await axios.post("http://localhost:3000/user/setDeviceToken", {
+          user_id : response.data.user_id,
+          token : token
+        })
+        console.log(res);
+        if(res.data=='success') navigate("/chatting");
+      }
     } catch (error) {
       console.error("로그인 요청 실패:", error);
     }
@@ -75,6 +93,7 @@ const Index = () => {
           setSignupAlert("이미 사용 중인 아이디입니다.");
         } else if (response.data === "success") {
           // 회원가입 성공일 경우
+          handleRequestPermission();
           setShowSignupModal(false);
         } else if (response.data === "failed") {
           // 회원가입 실패일 경우
@@ -85,6 +104,19 @@ const Index = () => {
       console.error("회원가입 요청 실패:", error);
     }
   };
+
+  // FCM
+  const handleRequestPermission = async () => {
+    // 서비스 워커 연결 (알림 허용)
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      console.log('Notification permission granted.');
+      registerServiceWorker();
+    }else {
+      console.log('Notification permission failed');
+      alert('알림 권한이 필요합니다. 브라우저 설정에서 알림 권한을 허용해주세요.');
+    }
+  }
 
   return (
     <Container>
