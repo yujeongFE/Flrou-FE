@@ -6,8 +6,11 @@ import ChatInput from "../../components/Chat/ChatSection";
 import ChattingBubble from "../../components/Chat/ChattingBubble";
 import { Container, ChatScreen, ButtonContainer } from "./style";
 
-import { PreviousChatting } from "../../components/api/Message/PreviousChatting";
+// import { PreviousChatting } from "../../components/api/Message/PreviousChatting";
 import { ChatRequest } from "../../components/api/Message/ChatRequest";
+
+import { messaging, onMessage, onBackgroundMessage } from "../../core/notification/firebase.config.mjs";
+
 
 const Index = () => {
   const [isCalender, setIsCalender] = useState(false);
@@ -21,9 +24,15 @@ const Index = () => {
   const id = localStorage.getItem("user_id");
 
   useEffect(() => {
-    const data = PreviousChatting();
-    console.log(data);
-  }, []);
+    navigator.serviceWorker.ready.then((registration) => {
+      console.log('Service Worker ready with scope:', registration.scope);
+    });
+  }, [])
+
+  // useEffect(() => {
+  //   const data = PreviousChatting();
+  //   console.log(data);
+  // }, []);
 
   const handleCalender = () => {
     {
