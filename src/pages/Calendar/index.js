@@ -18,6 +18,8 @@ import { UpdatePlanRequest } from "../../components/api/Plan/UpdatePlanRequest";
 import { UpdatePlanDone } from "../../components/api/Plan/CompletePlanRequest";
 import { DeletePlanRequest } from "../../components/api/Plan/DeletePlanRequest";
 import xbutton from "../../assets/x_button.png";
+import BottomBar from "../../components/Link/BottomMenu";
+import useIsMobile from "../../hooks/useIsMobile";
 
 const Calendar = () => {
   const today = new Date();
@@ -29,6 +31,7 @@ const Calendar = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const id = localStorage.getItem("user_id");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -269,17 +272,16 @@ const Calendar = () => {
           />
         </StyledCalendarWrapper>
       </Container>
-      <DetailContainer>
-        <StyledScheduleContainer>
+      <DetailContainer style={{ marginBottom: isMobile ? "10px" : 0 }}>
+        <StyledScheduleContainer style={{ marginBottom: "5px" }}>
           {filteredSchedules.map((schedule, index) => (
-            <StyledScheduleDetail key={index} style={{ marginBottom: "10px" }}>
+            <StyledScheduleDetail key={index}>
               <div style={{ alignItems: "center" }} onClick={() => handlePopup(schedule)}>
                 <span style={{ color: "#A391FF" }}>
                   {`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}
                 </span>
                 <span style={{ width: "100px", marginLeft: "50px" }}>{schedule.title}</span>
               </div>
-              <img src={xbutton} alt="일정 삭제하기" style={{ marginLeft: "50px" }} onClick={() => handleDelete(index)} />
               <img src={toggleStates[index] ? toggle_on : toggle_off} alt="토클 활성화" onClick={() => handleToggle(index)} />
             </StyledScheduleDetail>
           ))}
@@ -302,6 +304,7 @@ const Calendar = () => {
           <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveSchedule} isPopup={true} />
         </>
       )}
+      {isMobile && <BottomBar />}
     </>
   );
 };

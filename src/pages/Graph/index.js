@@ -4,6 +4,8 @@ import { Container, CenteredContent, DateTimeButton, PeriodText, PriodChangeButt
 import PerformanceChart from "../../components/Graph/PerformanceChart";
 import TripleSelectButton from "../../components/Button/TripleSelectButton";
 import { CompletionRateRequest } from "../../components/api/Graph/CompletionRateRequest";
+import BottomBar from "../../components/Link/BottomMenu";
+import useIsMobile from "../../hooks/useIsMobile";
 
 const Graph = () => {
   const user_id = localStorage.getItem("user_id");
@@ -12,6 +14,7 @@ const Graph = () => {
   const [selectMonth, setSelectMonth] = useState(currentDate.getMonth() + 1);
   const [selectYear, setSelectYear] = useState(currentDate.getFullYear());
   const [successCount, setSuccessCount] = useState([]);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,12 +107,8 @@ const Graph = () => {
           <TripleSelectButton options={["year", "month"]} onClick={handleButtonClick} activeOption={isActive} />
         </DateTimeButton>
       </Center>
-      <PerformanceChart
-        style={{ marginTop: "200px" }}
-        isActive={isActive}
-        currentYear={selectYear}
-        successCount={successCount}
-      />
+      <PerformanceChart style={{ marginTop: "200px" }} isActive={isActive} currentYear={selectYear} successCount={successCount} />
+      {isMobile && <BottomBar />} {/* 하단 바 추가 */}
     </Container>
   );
 };
