@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Logo } from "../Splash/style";
 import { KakaoLoginButton, FlrouLogin } from "./style";
@@ -11,7 +11,7 @@ import { LoginRequest } from "../../components/api/Login/LoginRequest";
 import { SignUpRequest } from "../../components/api/Login/SignUpRequest";
 
 // FCM
-import { messaging, getToken } from "../../core/notification/firebase.config.mjs";
+//import { messaging, getToken } from "../../core/notification/firebase.config.mjs";
 import { registerServiceWorker } from "../../utils/notification";
 import axios from "axios";
 
@@ -27,6 +27,17 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signupAlert, setSignupAlert] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const resetState = () => {
     setNickName("");
@@ -54,10 +65,14 @@ const Index = () => {
     setShowSignupModal(true);
   };
 
+  const LoginButtonStyle = isMobile ? { fontSize: "17px" } : {};
+
   const handleLogin = async () => {
     try {
+      console.log(email);
       const response = await LoginRequest(email, password);
       setShowLoginModal(false);
+      console.log("로그인 기록", response);
       // 로그인 성공 시 응답에서 받은 사용자 아이디를 localStorage에 저장
       localStorage.setItem("user_id", response.data.user_id);
 
@@ -121,11 +136,13 @@ const Index = () => {
   return (
     <Container>
       <Logo src={FLROU} />
-      <KakaoLoginButton onClick={handleKaKaoLoginClick}>
+      <KakaoLoginButton style={LoginButtonStyle} onClick={handleKaKaoLoginClick}>
         <img src={KaKaoLogo} alt="카카오 로고" />
         카카오로 로그인/회원가입
       </KakaoLoginButton>
-      <FlrouLogin onClick={handleFlrouLoginClick}>Flrou 자체 로그인/회원가입</FlrouLogin>
+      <FlrouLogin style={LoginButtonStyle} onClick={handleFlrouLoginClick}>
+        Flrou 자체 로그인/회원가입
+      </FlrouLogin>
 
       {showLoginModal && (
         <ModalOverlay>

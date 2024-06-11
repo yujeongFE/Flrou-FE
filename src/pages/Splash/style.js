@@ -46,6 +46,9 @@ export const Logo = styled.img`
   width: 30vw;
   height: 50vh;
   animation: ${fadeIn} 1.5s ease-in-out;
+  width: 199px;
+  height: 209px;
+  flex-shrink: 0;
 `;
 
 export const WelcomeButton = styled.div`
@@ -74,5 +77,16 @@ export const WelcomeButton = styled.div`
   &:hover {
     background: #7392ff;
     animation: ${bounceButton} 1.5s ease-in-out forwards;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 60vw;
+    color: #fff;
+    font-family: "Noto Sans KR";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 30vh;
   }
 `;
