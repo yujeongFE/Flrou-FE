@@ -26,7 +26,7 @@ const MessageContainer = styled.div`
 
 // 내 말풍선 스타일
 const MyMessageBubble = styled.div`
-  width: ${(props) => `${props.textLength * 20}px`};
+  width: 60%;
   align-self: ${(props) => (props.isMine ? "flex-end" : "flex-start")};
   background-color: ${(props) => (props.isMine ? "rgba(112, 143, 254, 0.48)" : "#ffffff")};
   border-radius: 12px;
@@ -42,6 +42,10 @@ const MyMessageBubble = styled.div`
   letter-spacing: 0.22px;
   position: relative;
   animation: ${fadeIn} 0.5s ease-in-out;
+
+  @media screen and (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 // 상대방 말풍선 컨테이너 스타일
@@ -66,6 +70,10 @@ const CharacterImage = styled.img`
   height: 10vh;
   border-radius: 50%;
   margin-right: 10px;
+
+  @media screen and (max-width: 768px) {
+    width: 60px;
+  }
 `;
 
 const UpdateModalContainer = styled.div`
@@ -193,7 +201,7 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
                     {success && (
                       <OpponentMessageContainer>
                         <CharacterImage src={Character} alt="character" />
-                        <OpponentMessageBubble style={{ marginTop: "500px", left: "-100px" }} isMine={false}>
+                        <OpponentMessageBubble style={{ marginTop: "500px", left: "-70px" }} isMine={false}>
                           {"일정 등록이 완료되었습니다"}
                         </OpponentMessageBubble>
                       </OpponentMessageContainer>

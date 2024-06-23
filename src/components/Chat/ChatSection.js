@@ -3,10 +3,9 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 import SendButton from "../../assets/send_button.svg";
-import ActiveSideButton from "../../assets/active_send_button.png";
-
 const InputContainer = styled.div`
   position: relative;
+  display: flex; /* 내부 요소들을 수평으로 정렬하기 위해 추가 */
 `;
 
 const StyledInput = styled.input`
@@ -25,25 +24,31 @@ const StyledInput = styled.input`
   font-weight: 400;
   line-height: normal;
   outline: none;
-`;
 
-const SendIcon = styled.img`
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  width: 2vw;
-  height: 5vh;
-  cursor: pointer;
-
-  &:hover {
-    content: url(${ActiveSideButton});
+  @media screen and (max-width: 768px) {
+    margin-bottom: 100px;
   }
 `;
 
-const ChatInput = ({ onSendMessage }) => {
-  const [isHovered, setIsHovered] = useState(false);
+const SendIcon = styled.img`
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  margin-bottom: 100px; /* 추가 */
+  margin-left: 10px; /* SendIcon과 Input 사이의 간격을 조정하기 위해 추가 */
+  width: 2vw;
+  height: 5vh;
+  cursor: not-allowed;
 
+  &:hover {
+    content: auto;
+  }
+  @media screen and (max-width: 768px) {
+    width: 30px;
+    margin-top: 10px;
+  }
+`;
+
+const ChatInput = ({ onSendMessage, isAccess }) => {
   const [message, setMessage] = useState("");
 
   const handleMessageChange = (e) => {
@@ -51,7 +56,8 @@ const ChatInput = ({ onSendMessage }) => {
   };
 
   const handleSendMessage = () => {
-    if (message.trim() !== "") {
+    // 전송 버튼이 활성화되어 있을 때만 메시지를 전송하도록 조건 추가
+    if (message.trim() !== "" && !isAccess) {
       onSendMessage(message);
       setMessage("");
     }
@@ -65,23 +71,15 @@ const ChatInput = ({ onSendMessage }) => {
         value={message}
         onChange={handleMessageChange}
         onKeyPress={(e) => {
-          if (e.key === "Enter") {
+          // 엔터 키를 눌렀을 때 메시지 전송 기능이 비활성화되어 있으면 동작하지 않도록 수정
+          if (e.key === "Enter" && !isAccess) {
             handleSendMessage();
           }
         }}
       />
-      <SendIcon
-        src={isHovered ? ActiveSideButton : SendButton}
-        alt="send button"
-        onClick={handleSendMessage}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      />
+      <SendIcon src={SendButton} alt="send button" onClick={handleSendMessage} />
     </InputContainer>
   );
-};
-ChatInput.propTypes = {
-  onSendMessage: PropTypes.func.isRequired,
 };
 
 export default ChatInput;
