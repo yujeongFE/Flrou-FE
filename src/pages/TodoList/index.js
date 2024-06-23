@@ -12,7 +12,8 @@ import btn2 from "../../assets/todo_btn_2.png";
 import useIsMobile from "../../hooks/useIsMobile";
 
 const Index = () => {
-  const user_id = localStorage.getItem('user_id');
+  const user_id = localStorage.getItem("user_id");
+  const isMobile = useIsMobile();
 
   // 투두 리스트
   const [todoList, setTodoList] = useState(null);
@@ -23,27 +24,25 @@ const Index = () => {
   // 투두 수정본
   const [newTodo, setNewTodo] = useState(null);
 
-
   // 전체 투두리스트 불러오기
   const getTodo = async () => {
     const res = await axios.get(`http://localhost:3000/todo/getAllTodo/${user_id}`);
     console.log(res.data);
     setTodoList(res.data);
-  }
+  };
 
   // 버튼 클릭 시 (isDone true<->false)
   const handleTodoBtn = async (list) => {
     try {
       const res = await axios.post("http://localhost:3000/todo/updateTodoDone", {
-        todo_id: list.id
-      })
+        todo_id: list.id,
+      });
       console.log(res);
       getTodo();
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
 
   // 리스트 클릭시 (수정/삭제 요청)
   const clickContent = async (list) => {
@@ -51,41 +50,40 @@ const Index = () => {
     console.log(list.todo);
     setClicked(!clicked);
     console.log(clicked);
-  }
+  };
 
   // 수정 버튼 클릭시
   const clickV = async (list) => {
-    if(!newTodo) setClicked(false);
-    if(newTodo) {
+    if (!newTodo) setClicked(false);
+    if (newTodo) {
       await axios.post("http://localhost:3000/todo/updateTodo", {
         todo_id: list.id,
-        new_todo: newTodo
-      })
+        new_todo: newTodo,
+      });
       setClicked(false);
       getTodo();
     }
-  }
+  };
 
   // 삭제 버튼 클릭시
   const clickX = async (list) => {
-    if(confirm("삭제하시겠습니까?")) {
+    if (confirm("삭제하시겠습니까?")) {
       await axios.post("http://localhost:3000/todo/deleteTodo", {
         todo_id: list.id,
-      })
+      });
       getTodo();
-    }else {
+    } else {
       setClicked(false);
     }
-  }
+  };
 
   useEffect(() => {
     getTodo();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    console.log(newTodo)
-  }, [newTodo])
-
+    console.log(newTodo);
+  }, [newTodo]);
 
   // 최종 발표 ver
   return (
@@ -95,15 +93,23 @@ const Index = () => {
         <div>Todo List</div>
       </TodoSubject>
 
-      {todoList &&
+      {todoList && (
         <TodoContainer>
           {/* 미완료 탭 */}
-        {todoList.filter(list => !list.isDone).map((list) => {
-          let color = '#77ADFD';
+          {todoList
+            .filter((list) => !list.isDone)
+            .map((list) => {
+              let color = "#77ADFD";
 
-          return(
+              return (
                 <>
-            <TodoList key={list.id} col={color} onClick={() => {clickContent(list)}}>
+                  <TodoList
+                    key={list.id}
+                    col={color}
+                    onClick={() => {
+                      clickContent(list);
+                    }}
+                  >
                     {clicked ? (
                       <>
                         <TodoContent>
@@ -113,34 +119,63 @@ const Index = () => {
                             placeholder={list.todo}
                           />
                         </TodoContent>
-                <TodoButton onClick={(e) => {e.stopPropagation()}}>
-                  <TodoButton2 col={'#77ADFD'} onClick={() => {clickV(list)}}>V</TodoButton2>
-                  <TodoButton2 col={'red'} onClick={() => {clickX(list)}}>X</TodoButton2>
+                        <TodoButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <TodoButton2
+                            col={"#77ADFD"}
+                            onClick={() => {
+                              clickV(list);
+                            }}
+                          >
+                            V
+                          </TodoButton2>
+                          <TodoButton2
+                            col={"red"}
+                            onClick={() => {
+                              clickX(list);
+                            }}
+                          >
+                            X
+                          </TodoButton2>
                         </TodoButton>
                       </>
                     ) : (
                       <>
                         <TodoContent>{list.todo}</TodoContent>
                         <TodoButton>
-                    <img src={btn1} onClick={(e) => {
+                          <img
+                            src={btn1}
+                            onClick={(e) => {
                               e.stopPropagation();
                               handleTodoBtn(list);
-                    }}></img>
+                            }}
+                          ></img>
                         </TodoButton>
                       </>
                     )}
                   </TodoList>
                 </>
-          )
+              );
             })}
 
           {/* 완료 탭 */}
-        {todoList.filter(list => list.isDone).map((list) => {
-          let color = 'lightgray';
+          {todoList
+            .filter((list) => list.isDone)
+            .map((list) => {
+              let color = "lightgray";
 
-          return(
+              return (
                 <>
-            <TodoList key={list.id} col={color} onClick={() => {clickContent(list)}}>
+                  <TodoList
+                    key={list.id}
+                    col={color}
+                    onClick={() => {
+                      clickContent(list);
+                    }}
+                  >
                     {clicked ? (
                       <>
                         <TodoContent>
@@ -150,29 +185,49 @@ const Index = () => {
                             placeholder={list.todo}
                           />
                         </TodoContent>
-                <TodoButton onClick={(e) => {e.stopPropagation()}}>
-                  <TodoButton2 col={'#77ADFD'} onClick={() => {clickV(list)}}>V</TodoButton2>
-                  <TodoButton2 col={'red'} onClick={() => {clickX(list)}}>X</TodoButton2>
+                        <TodoButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <TodoButton2
+                            col={"#77ADFD"}
+                            onClick={() => {
+                              clickV(list);
+                            }}
+                          >
+                            V
+                          </TodoButton2>
+                          <TodoButton2
+                            col={"red"}
+                            onClick={() => {
+                              clickX(list);
+                            }}
+                          >
+                            X
+                          </TodoButton2>
                         </TodoButton>
                       </>
                     ) : (
                       <>
                         <TodoContent>{list.todo}</TodoContent>
                         <TodoButton>
-                    <img src={btn2} onClick={(e) => {
+                          <img
+                            src={btn2}
+                            onClick={(e) => {
                               e.stopPropagation();
                               handleTodoBtn(list);
-                    }}></img>
+                            }}
+                          ></img>
                         </TodoButton>
                       </>
                     )}
                   </TodoList>
                 </>
-          )
+              );
             })}
-
         </TodoContainer>
-      }
+      )}
       {isMobile && <BottomBar />}
     </Container>
   );
