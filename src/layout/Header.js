@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import Button from "../assets/sidebar_button.png";
 import Bell from "../assets/bell.svg";
@@ -19,6 +19,7 @@ const HeaderContainer = styled.header`
 const FlexContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center; /* 텍스트를 가로 중앙 정렬 */
 `;
 
 const SideBarButton = styled.img`
@@ -27,6 +28,11 @@ const SideBarButton = styled.img`
   min-width: 30px;
   min-height: 21px;
   cursor: pointer;
+
+  /* 모바일 화면에서 숨김 */
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const LogoText = styled.span`
@@ -36,11 +42,19 @@ const LogoText = styled.span`
     0 0 3px #329cfe;
   color: #fff;
   font-family: Coiny;
-  font-size: 64px;
+  font-size: 48px; /* 모바일 버전에서 글꼴 크기 조절 */
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   letter-spacing: 1.28px;
+  display: flex; /* 텍스트를 가로 중앙 정렬을 위한 display 속성 추가 */
+
+  /* 화면 폭이 768px 미만인 경우 폰트 크기를 줄임 */
+  ${({ theme }) =>
+    theme.mobile &&
+    css`
+      font-size: 36px; /* 모바일 버전에서 더 작은 글꼴 크기 조절 */
+    `}
 `;
 
 const BellButton = styled.img`
@@ -48,6 +62,12 @@ const BellButton = styled.img`
   height: 4vh;
   min-width: 26px;
   min-height: 24px;
+  visibility: hidden; /* 기본적으로 보이지 않음 */
+
+  /* 모바일 화면에서는 보이지 않음 */
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SidebarContainer = styled.div`
@@ -71,14 +91,9 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <SidebarContainer isOpen={isSidebarOpen}>
-        <HeaderMenu isOpen={isSidebarOpen} setOpen={setSidebarOpen} />
-      </SidebarContainer>
-      <SideBarButton src={Button} alt={"sidebar button"} onClick={toggleSidebar} />
       <FlexContainer>
         <LogoText>FLROU</LogoText>
       </FlexContainer>
-      <BellButton src={Bell} alt={"bell button"} />
     </HeaderContainer>
   );
 };
