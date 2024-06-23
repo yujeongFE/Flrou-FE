@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import Header from "../../layout/Header";
-import { Container, TodoButton, TodoButton2, TodoContainer, TodoContent, TodoList, TodoSubject } from "./style";
+import { Container, TodoButton, TodoButton2, TodoContainer, TodoContent, TodoList, TodoSubject, Line } from "./style";
 // import { Container, TodoArraow, TodoButton, TodoButton2, TodoContainer, TodoContent, TodoList, TodoSubject } from "./style";
 
 import btn1 from "../../assets/todo_btn_1.png";
@@ -12,9 +12,8 @@ const Index = () => {
   const user_id = localStorage.getItem('user_id');
 
   // 투두 리스트
-  const [todoList, setTodoList] = useState(null);
-  // 미완료, 완료 탭 구분
-  // const [finished, setFinished] = useState(false);
+  const [todoListActivate, setTodoListActivate] = useState(null);
+  const [todoListNonActivate, setTodoListNonActivate] = useState(null);
   // 리스트 클릭 여부
   const [clicked, setClicked] = useState(false);
   // 투두 수정본
@@ -24,8 +23,10 @@ const Index = () => {
   // 전체 투두리스트 불러오기
   const getTodo = async () => {
     const res = await axios.get(`http://localhost:3000/todo/getAllTodo/${user_id}`);
-    console.log(res.data);
-    setTodoList(res.data);
+    console.log(res.data.activate);
+    console.log(res.data.nonActivate);
+    setTodoListActivate(res.data.activate);
+    setTodoListNonActivate(res.data.nonActivate);
   }
 
   // 버튼 클릭 시 (isDone true<->false)
@@ -34,7 +35,7 @@ const Index = () => {
       const res = await axios.post("http://localhost:3000/todo/updateTodoDone", {
         todo_id: list.id
       })
-      console.log(res);
+      // console.log(res);
       getTodo();
     } catch (error) {
       console.log(error);
@@ -45,9 +46,9 @@ const Index = () => {
   // 리스트 클릭시 (수정/삭제 요청)
   const clickContent = async (list) => {
     // 팝업 띄우기?
-    console.log(list.todo);
+    // console.log(list.todo);
     setClicked(!clicked);
-    console.log(clicked);
+    // console.log(clicked);
   }
 
   // 수정 버튼 클릭시
@@ -79,9 +80,9 @@ const Index = () => {
     getTodo();
   }, [])
 
-  useEffect(() => {
-    console.log(newTodo)
-  }, [newTodo])
+  // useEffect(() => {
+  //   console.log(newTodo)
+  // }, [newTodo])
 
 
   // 최종 발표 ver
@@ -92,12 +93,10 @@ const Index = () => {
           <div>Todo List</div>
       </TodoSubject>
 
-      {todoList &&
       <TodoContainer>
         {/* 미완료 탭 */}
-        {todoList.filter(list => !list.isDone).map((list) => {
+        {todoListActivate && todoListActivate.map((list) => {
           let color = '#77ADFD';
-
           return(
             <>
             <TodoList key={list.id} col={color} onClick={() => {clickContent(list)}}>
@@ -131,10 +130,13 @@ const Index = () => {
           )
         })}
 
-        {/* 완료 탭 */}
-        {todoList.filter(list => list.isDone).map((list) => {
-          let color = 'lightgray';
+        {todoListActivate.length > 0 && todoListNonActivate.length > 0 &&
+          <Line />
+        }
 
+        {/* 완료 탭 */}
+        {todoListNonActivate && todoListNonActivate.map((list) => {
+          let color = 'lightgray';
           return(
             <>
             <TodoList key={list.id} col={color} onClick={() => {clickContent(list)}}>
@@ -169,7 +171,6 @@ const Index = () => {
         })}
 
       </TodoContainer>
-      }
     </Container>
   );
 

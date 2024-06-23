@@ -110,3 +110,10 @@ export const TodoButton2 = styled.div`
       transform: scale(107%);
     }
 `
+
+export const Line = styled.div`
+  width: 100%; height: 5px;
+  background-color: lightgray;
+  margin: 0 0 20px 0;
+  border-radius: 30px;
+`
