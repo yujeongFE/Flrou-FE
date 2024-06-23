@@ -13,10 +13,15 @@ export const StyledCalendarWrapper = styled.div`
   width: 80%;
   height: auto;
   display: flex;
-  justify-content: flex-end; /* 수정된 부분 */
+  justify-content: flex-end;
   position: relative;
   margin: 10px auto;
-  overflow-y: hidden; /* 수정된 부분 */
+  overflow-y: hidden;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
   .react-calendar {
     width: 100%;
     border: none;
@@ -60,7 +65,7 @@ export const StyledCalendarWrapper = styled.div`
     gap: 2px; /* 각 셀 사이의 간격 설정 */
   }
 
-  /* 토요일에만 빨간색으로 */
+  /* 토요일에만 파란색으로 */
   .react-calendar__month-view__weekdays__weekday--weekend abbr[title="토요일"] {
     color: blue;
   }
@@ -192,6 +197,12 @@ export const StyledCalendarWrapper = styled.div`
     color: white;
     border: 3px solid #2ed4eb;
   }
+
+  @media (max-width: 768px) {
+    .react-calendar__tile {
+      height: 70px; /* 날짜 버튼 상자의 높이를 줄임 */
+    }
+  }
 `;
 
 export const StyledCalendar = styled(Calendar)``;
@@ -245,6 +256,10 @@ export const DetailContainer = styled.div`
   justify-content: space-between; /* 텍스트 일렬 정렬 및 일정한 간격 */
   align-items: center;
   flex-wrap: wrap; /* 너비를 넘어가면 줄 바꿈 */
+  @media (max-width: 768px) {
+    margin-top: 0px;
+    padding: 20px 0;
+  }
 `;
 
 export const StyledScheduleContainer = styled.div`
@@ -282,4 +297,16 @@ export const StyledScheduleDetail = styled.div`
     margin-right: 30px;
   }
   z-index: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 18px;
+    margin-top: 0px;
+    margin-bottom: 30px;
+    img {
+      margin-right: 30px;
+      width: 50px;
+      heigth: auto;
+    }
+  }
 `;
