@@ -11,7 +11,6 @@ import BottomBar from "../../components/Link/BottomMenu";
 import { PreviousChatting } from "../../components/api/Message/PreviousChatting";
 import { ChatRequest } from "../../components/api/Message/ChatRequest";
 import useIsMobile from "../../hooks/useIsMobile";
-
 import { messaging, onMessage, onBackgroundMessage } from "../../core/notification/firebase.config.mjs";
 
 const Index = () => {
@@ -28,9 +27,9 @@ const Index = () => {
 
   useEffect(() => {
     navigator.serviceWorker.ready.then((registration) => {
-      console.log('Service Worker ready with scope:', registration.scope);
+      console.log("Service Worker ready with scope:", registration.scope);
     });
-  }, [])
+  }, []);
 
   // useEffect(() => {
   //   const data = PreviousChatting();
@@ -102,9 +101,9 @@ const Index = () => {
       const calendarTodoMessage = { text: reply, isMine: false };
 
       if (isCalender) {
-        setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, calendarTodoMessage]);
+        setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
       } else if (isTodo) {
-        setTodoMessage((prevTodoMessage) => [...prevTodoMessage, calendarTodoMessage]);
+        setTodoMessage((prevTodoMessage) => [...prevTodoMessage, replyMessage]);
       } else {
         setMessages((prevMessages) => [...prevMessages, replyMessage]);
       }
