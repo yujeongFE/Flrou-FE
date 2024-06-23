@@ -16,6 +16,10 @@ export const ModalContent = styled.div`
   background-color: white;
   padding: 50px;
   border-radius: 8px;
+  @media screen and (max-width: 768px) {
+    width: 60vw;
+    height: auto;
+  }
 `;
 
 export const ModalTitle = styled.h2`

@@ -1,16 +1,17 @@
+// Index.js
 import React, { useState, useEffect } from "react";
-
+import styled from "styled-components";
 import Header from "../../layout/Header";
 import PrimaryButton from "../../components/Button/PrimaryButton";
 import ChatInput from "../../components/Chat/ChatSection";
 import ChattingBubble from "../../components/Chat/ChattingBubble";
 import { Container, ChatScreen, ButtonContainer } from "./style";
+import BottomBar from "../../components/Link/BottomMenu";
 
-// import { PreviousChatting } from "../../components/api/Message/PreviousChatting";
+import { PreviousChatting } from "../../components/api/Message/PreviousChatting";
 import { ChatRequest } from "../../components/api/Message/ChatRequest";
-
+import useIsMobile from "../../hooks/useIsMobile";
 import { messaging, onMessage, onBackgroundMessage } from "../../core/notification/firebase.config.mjs";
-
 
 const Index = () => {
   const [isCalender, setIsCalender] = useState(false);
@@ -22,12 +23,13 @@ const Index = () => {
   const [plan, setPlan] = useState({});
   const [isUpdateChatting, setIsUpdateChatting] = useState(false);
   const id = localStorage.getItem("user_id");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     navigator.serviceWorker.ready.then((registration) => {
-      console.log('Service Worker ready with scope:', registration.scope);
+      console.log("Service Worker ready with scope:", registration.scope);
     });
-  }, [])
+  }, []);
 
   // useEffect(() => {
   //   const data = PreviousChatting();
@@ -99,9 +101,9 @@ const Index = () => {
       const calendarTodoMessage = { text: reply, isMine: false };
 
       if (isCalender) {
-        setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, calendarTodoMessage]);
+        setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
       } else if (isTodo) {
-        setTodoMessage((prevTodoMessage) => [...prevTodoMessage, calendarTodoMessage]);
+        setTodoMessage((prevTodoMessage) => [...prevTodoMessage, replyMessage]);
       } else {
         setMessages((prevMessages) => [...prevMessages, replyMessage]);
       }
@@ -134,6 +136,7 @@ const Index = () => {
         </PrimaryButton>
       </ButtonContainer>
       <ChatInput onSendMessage={handleSendMessage} isAccess={isUpdateChatting} />
+      {isMobile && <BottomBar />}
     </Container>
   );
 };

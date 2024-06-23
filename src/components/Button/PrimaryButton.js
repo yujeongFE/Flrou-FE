@@ -23,6 +23,17 @@ const StyledButton = styled.button`
   font-weight: 600;
   line-height: normal;
 
+  /* 모바일 화면에서 숨김 */
+  @media screen and (max-width: 768px) {
+    width: 96px;
+    color: #000;
+    font-family: "Noto Sans KR";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
   ${(props) =>
     props.isActive
       ? `
