@@ -93,7 +93,7 @@ const Graph = () => {
               <PriodChangeButton style={{ justifyContent: "flex-start" }} onClick={handlePrev}>
                 {"< "}
               </PriodChangeButton>
-              <span>{getCurrentMonth()}</span>
+              <span style={{ color: "#63a1fd" }}>{getCurrentMonth()}</span>
               <PriodChangeButton style={{ justifyContent: "flex-start" }} onClick={handleNext}>
                 {" >"}
               </PriodChangeButton>
@@ -101,7 +101,7 @@ const Graph = () => {
           )}
         </PeriodText>
         <CenteredContent>
-          <span>일정 완료율 그래프</span>
+          <span>완료율 그래프</span>
         </CenteredContent>
         <DateTimeButton>
           <TripleSelectButton options={["year", "month"]} onClick={handleButtonClick} activeOption={isActive} />
