@@ -164,7 +164,7 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
           text: "캘린더에 일정 등록이 완료되었습니다!",
           isMine: false,
         };
-        setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
+        // setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
       }
     } catch (error) {
       console.error("일정 등록 실패:", error);
