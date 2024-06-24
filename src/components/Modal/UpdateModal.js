@@ -234,9 +234,11 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
         <button style={saveButtonStyle} onClick={handleSave}>
           저장
         </button>
-        <button style={deleteButtonStyle} onClick={handleDeleteClick}>
-          삭제
-        </button>
+        {isPopup && (
+          <button style={deleteButtonStyle} onClick={handleDeleteClick}>
+            삭제
+          </button>
+        )}
         <button style={closeBtnStyle} onClick={onClose}>
           닫기
         </button>
