@@ -20,6 +20,7 @@ import { DeletePlanRequest } from "../../components/api/Plan/DeletePlanRequest";
 import xbutton from "../../assets/x_button.png";
 import BottomBar from "../../components/Link/BottomMenu";
 import useIsMobile from "../../hooks/useIsMobile";
+import Background from "../../layout/Background";
 
 const Calendar = () => {
   const today = new Date();
@@ -203,6 +204,7 @@ const Calendar = () => {
     <>
       <Container>
         <Header />
+        {!isMobile && <Background />}
         <StyledCalendarWrapper>
           <StyledCalendar
             value={date}

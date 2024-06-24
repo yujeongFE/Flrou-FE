@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import Background from "../../layout/Background";
 import Header from "../../layout/Header";
 import PrimaryButton from "../../components/Button/PrimaryButton";
 import ChatInput from "../../components/Chat/ChatSection";
@@ -76,7 +76,7 @@ const Index = () => {
     if (!isCalender) {
       setIsTodo((prevIsActive) => !prevIsActive);
       setChatType(1);
-      setTodoMessage([]); // todo 대화 초기화 
+      setTodoMessage([]); // todo 대화 초기화
       setIsUpdateChatting(false); // 채팅 입력 금지 해제
       setIsButtonDisabled(true);
     }
@@ -162,6 +162,7 @@ const Index = () => {
   return (
     <Container>
       <Header />
+      {!isMobile && <Background />}
       <ChatScreen>
         <ChattingBubble
           messages={messages}
