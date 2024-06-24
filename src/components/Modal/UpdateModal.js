@@ -205,7 +205,7 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button style={saveButtonStyle} onClick={handleSave}>
-          일정 수정
+          저장
         </button>
         <button style={buttonStyle} onClick={onClose}>
           닫기

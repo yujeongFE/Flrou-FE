@@ -5,6 +5,9 @@ export const Container = styled.div`
   height: 100%;
   padding: 0 4vw;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const PeriodText = styled.div`
@@ -15,8 +18,13 @@ export const PeriodText = styled.div`
   font-weight: 400;
   line-height: normal;
   letter-spacing: 0.36px;
+<<<<<<< Updated upstream
+=======
+  display: flex;
+  align-items: center;
+  justify-content: center;
   @media screen and (max-width: 768px) {
-    width: 100px;
+    width: auto;
     color: #000;
     font-family: "Noto Sans KR";
     font-size: 15px;
@@ -25,25 +33,43 @@ export const PeriodText = styled.div`
     line-height: normal;
     white-space: nowrap;
   }
+>>>>>>> Stashed changes
 `;
 
 export const PriodChangeButton = styled.button`
-  width: 30px;
-  height: 10px;
+  width: auto;
+  height: auto;
   flex-shrink: 0;
   color: #b7b7b7;
   font-weight: 800;
   background: none;
   border: none;
   cursor: pointer;
-  color: #63a1fd;
 `;
 
 export const DateTimeButton = styled.div`
   width: auto;
   padding: 0 1vw;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  @media screen and (max-width: 768px) {
+    margin-left: 5px;
+  }
+`;
+
+export const Center = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 30px;
+  @media screen and (max-width: 768px) {
+    justify-content: flex-start;
+    gap: 60px;
+  }
 `;
 
 export const CenteredContent = styled.div`
@@ -59,6 +85,7 @@ export const CenteredContent = styled.div`
   font-weight: 600;
   line-height: normal;
   letter-spacing: 0.36px;
+
   color: #63a1fd;
   @media screen and (max-width: 768px) {
     width: 100px;
@@ -69,14 +96,5 @@ export const CenteredContent = styled.div`
     line-height: normal;
     white-space: nowrap;
   }
-`;
 
-export const Center = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-  @media screen and (max-width: 768px) {
-    justify-content: flex-start; /* 그래프를 왼쪽으로 붙이기 위해 수정 */
-    gap: 60px; /* 모바일 버전에서만 사이 간격 조절 */
-  }
 `;

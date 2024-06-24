@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../layout/Header";
-import { Container, CenteredContent, DateTimeButton, PeriodText, PriodChangeButton, Center } from "./style";
+import { Container, CenteredContent, PeriodText, PriodChangeButton, Center } from "./style";
 import PerformanceChart from "../../components/Graph/PerformanceChart";
 import TripleSelectButton from "../../components/Button/TripleSelectButton";
 import { CompletionRateRequest } from "../../components/api/Graph/CompletionRateRequest";
 import BottomBar from "../../components/Link/BottomMenu";
 import useIsMobile from "../../hooks/useIsMobile";
+import { DateTimeButton } from "./style";
 
 const Graph = () => {
   const user_id = localStorage.getItem("user_id");
@@ -29,7 +30,6 @@ const Graph = () => {
     fetchData();
   }, [selectYear, selectMonth]);
 
-  // 이전 연도로 이동하는 함수
   const handlePrevYear = () => {
     const prevYear = selectYear - 1;
     if (prevYear >= new Date().getFullYear()) {
@@ -38,7 +38,6 @@ const Graph = () => {
     setSelectYear(prevYear);
   };
 
-  // 다음 연도로 이동하는 함수
   const handleNextYear = () => {
     const nextYear = selectYear + 1;
     if (nextYear > new Date().getFullYear()) {
@@ -77,7 +76,7 @@ const Graph = () => {
 
   const getCurrentMonth = () => {
     if (isActive === "month") {
-      return `${selectYear}년 ${selectMonth}월`; // selectMonth는 0부터 시작하므로 1을 더해줌
+      return `${selectYear}년 ${selectMonth}월`;
     } else {
       return `${selectYear}년`;
     }
@@ -87,27 +86,31 @@ const Graph = () => {
     <Container>
       <Header />
       <Center>
-        <PeriodText>
-          {(isActive === "month" || isActive === "year") && (
-            <>
-              <PriodChangeButton style={{ justifyContent: "flex-start" }} onClick={handlePrev}>
-                {"< "}
-              </PriodChangeButton>
-              <span style={{ color: "#63a1fd" }}>{getCurrentMonth()}</span>
-              <PriodChangeButton style={{ justifyContent: "flex-start" }} onClick={handleNext}>
-                {" >"}
-              </PriodChangeButton>
-            </>
-          )}
-        </PeriodText>
         <CenteredContent>
           <span>완료율 그래프</span>
         </CenteredContent>
-        <DateTimeButton>
-          <TripleSelectButton options={["year", "month"]} onClick={handleButtonClick} activeOption={isActive} />
-        </DateTimeButton>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
+          <PeriodText>
+            {(isActive === "month" || isActive === "year") && (
+              <>
+                <PriodChangeButton onClick={handlePrev}>{"< "}</PriodChangeButton>
+                <span>{getCurrentMonth()}</span>
+                <PriodChangeButton onClick={handleNext}>{" >"}</PriodChangeButton>
+              </>
+            )}
+          </PeriodText>
+          <DateTimeButton style={{ marginLeft: "auto" }}>
+            <TripleSelectButton options={["year", "month"]} onClick={handleButtonClick} activeOption={isActive} />
+          </DateTimeButton>
+        </div>
       </Center>
-      <PerformanceChart style={{ marginTop: "200px" }} isActive={isActive} currentYear={selectYear} successCount={successCount} />
+      <PerformanceChart
+        style={{ marginTop: "50px", width: "80%" }}
+        isActive={isActive}
+        currentYear={selectYear}
+        currentDate={selectMonth}
+        successCount={successCount}
+      />
       {isMobile && <BottomBar />} {/* 하단 바 추가 */}
     </Container>
   );
