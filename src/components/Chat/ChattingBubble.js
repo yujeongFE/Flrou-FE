@@ -38,7 +38,7 @@ const MyMessageBubble = styled.div`
   font-size: 22px;
   font-style: normal;
   font-weight: 500;
-  line-height: 1.5
+  line-height: 1.5;
   letter-spacing: 0.22px;
   position: relative;
   animation: ${fadeIn} 0.5s ease-in-out;
@@ -86,23 +86,47 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
   const [success, setSuccess] = useState(false);
   const id = localStorage.getItem("user_id");
 
+  const isValidDate = (date) => {
+    return date instanceof Date && !isNaN(date);
+  };
+
+  const isValidNumber = (value) => {
+    return typeof value === "number" && !isNaN(value);
+  };
+
+  const getValidDate = (year, month, day, hour, minute) => {
+    return new Date(
+      isValidNumber(year) ? year : new Date().getFullYear(),
+      isValidNumber(month) ? month - 1 : new Date().getMonth(),
+      isValidNumber(day) ? day : new Date().getDate(),
+      isValidNumber(hour) ? hour : 0,
+      isValidNumber(minute) ? minute : 0,
+    );
+  };
+
   useEffect(() => {
-    if (Object.keys(plan).length !== 0) {
-      console.log(plan);
-      const startDate = new Date(plan.s_year, plan.s_month - 1, plan.s_day, plan.s_hour, plan.s_minute);
-      const endDate = new Date(plan.f_year, plan.f_month - 1, plan.f_day, plan.f_hour, plan.f_minute);
+    if (isCalender && Object.keys(plan).length !== 0) {
+      const { s_year, s_month, s_day, s_hour, s_minute, f_year, f_month, f_day, f_hour, f_minute } = plan;
+
+      const startDate = getValidDate(s_year, s_month, s_day, s_hour, s_minute);
+      const endDate = getValidDate(f_year, f_month, f_day, f_hour, f_minute);
+
+      if (!isValidDate(startDate) || !isValidDate(endDate)) {
+        console.error("Invalid date values in plan:", plan);
+        return;
+      }
 
       const updatedPlan = {
-        title: plan?.plan,
+        title: plan.plan,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
-        color: plan?.color || null,
+        color: plan.color || null,
       };
 
       setSelectedSchedule(updatedPlan);
       setIsUpdateChatting(true);
     }
-  }, [plan]);
+  }, [plan, isCalender]);
 
   const handleSave = async (selectedColor, title) => {
     const colors = [
@@ -156,7 +180,6 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
       );
 
       if (response.data === "success") {
-        console.log("성공");
         alert("일정이 등록되었습니다!");
         // 등록 완료 메시지 추가
         setSuccess(true);
@@ -165,6 +188,12 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
           isMine: false,
         };
         setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
+        setIsCalender(false);
+        setIsTodo(false);
+        setScheduleMessage([]);
+        setTodoMessage([]);
+        setIsButtonDisabled(false);
+        fetchPreviousChatting();
       }
     } catch (error) {
       console.error("일정 등록 실패:", error);
@@ -175,7 +204,6 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
     setIsUpdateChatting(!isUpdateChatting); // 상태 업데이트
   };
 
-  console.log(selectedSchedule);
   return (
     <MessageContainer>
       {isCalender && (
@@ -192,22 +220,22 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
             ) : (
               <>
                 <OpponentMessageContainer style={{ display: "flex", alignItems: "flex-start" }}>
-                  <CharacterImage src={Character} alt="character" />
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
+                <CharacterImage src={Character} alt="character" />
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
                     <UpdateModalContainer key={index}>
-                      <UpdateModal schedule={selectedSchedule} onClose={toggleUpdateModal} onSave={handleSave} isPopup={false} />
-                    </UpdateModalContainer>
-                    {success && (
-                      <OpponentMessageContainer>
-                        <CharacterImage src={Character} alt="character" />
-                        <OpponentMessageBubble style={{ marginTop: "500px", left: "-70px" }} isMine={false}>
-                          {"일정 등록이 완료되었습니다"}
-                        </OpponentMessageBubble>
-                      </OpponentMessageContainer>
-                    )}
-                  </div>
-                </OpponentMessageContainer>
+                    <UpdateModal schedule={selectedSchedule} onClose={toggleUpdateModal} onSave={handleSave} isPopup={false} />
+                  </UpdateModalContainer>
+                  {success && (
+                    <OpponentMessageContainer>
+                      <CharacterImage src={Character} alt="character" />
+                      <OpponentMessageBubble style={{ marginTop: "500px", left: "-70px" }} isMine={false}>
+                        {"일정 등록이 완료되었습니다"}
+                      </OpponentMessageBubble>
+                    </OpponentMessageContainer>
+                  )}
+                </div>
+              </OpponentMessageContainer>
               </>
             ),
           )}
@@ -245,9 +273,9 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
             </MyMessageBubble>
           ) : (
             <>
-              <OpponentMessageContainer key={index}>
-                <CharacterImage src={Character} alt="character" />
-                <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
+            <OpponentMessageContainer key={index}>
+              <CharacterImage src={Character} alt="character" />
+              <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
               </OpponentMessageContainer>
               {isUpdateChatting && (
                 <OpponentMessageContainer key={index}>
@@ -292,6 +320,12 @@ ChattingBubble.propTypes = {
     }),
   ).isRequired,
   isTodo: PropTypes.bool.isRequired,
+  setMessages: PropTypes.func.isRequired,
+  setScheduleMessage: PropTypes.func.isRequired,
+  setTodoMessage: PropTypes.func.isRequired,
+  setIsCalender: PropTypes.func.isRequired,
+  setIsTodo: PropTypes.func.isRequired,
+  setIsButtonDisabled: PropTypes.func.isRequired,
 };
 
 export default ChattingBubble;

@@ -1,4 +1,3 @@
-// Index.js
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "../../layout/Header";
@@ -22,8 +21,34 @@ const Index = () => {
   const [todoMessage, setTodoMessage] = useState([]);
   const [plan, setPlan] = useState({});
   const [isUpdateChatting, setIsUpdateChatting] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const id = localStorage.getItem("user_id");
   const isMobile = useIsMobile();
+
+  const fetchPreviousChatting = async () => {
+    try {
+      const data = await PreviousChatting(id);
+      const formattedMessages = data.map((chat) => {
+        let text = chat.content;
+        // 본인 대화가 아닌 경우
+        if (chat.isUser == 1) {
+          try {
+            const parsedContent = JSON.parse(chat.content);
+            text = parsedContent.response || chat.content;
+          } catch (e) {
+            console.error("JSON 파싱 실패:", e);
+          }
+        }
+        return {
+          text: text,
+          isMine: chat.isUser !== 1,
+        };
+      });
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error("이전 채팅 로드 실패:", error);
+    }
+  };
 
   useEffect(() => {
     navigator.serviceWorker.ready.then((registration) => {
@@ -31,21 +56,29 @@ const Index = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const data = PreviousChatting();
-  //   console.log(data);
-  // }, []);
+  useEffect(() => {
+    fetchPreviousChatting();
+  }, [id]);
 
-  const handleCalender = () => {
-    {
-      !isTodo && setIsCalender((prevIsActive) => !prevIsActive);
+  const handleCalender = async () => {
+    if (!isTodo) {
+      setIsCalender((prevIsActive) => !prevIsActive);
       setChatType(1);
+      setIsButtonDisabled(true); // 캘린더 버튼 클릭시 todo 버튼 동시에 눌리는 동작 방지
+      setScheduleMessage([]); // 캘린더 대화 초기화
+      setPlan({}); // 플랜 초기화
+      setIsUpdateChatting(false); // 채팅 입력 금지 해제
+      await fetchPreviousChatting();
     }
   };
+
   const handleToDo = () => {
-    {
-      !isCalender && setIsTodo((prevIsActive) => !prevIsActive);
+    if (!isCalender) {
+      setIsTodo((prevIsActive) => !prevIsActive);
       setChatType(1);
+      setTodoMessage([]); // todo 대화 초기화 
+      setIsUpdateChatting(false); // 채팅 입력 금지 해제
+      setIsButtonDisabled(true);
     }
   };
 
@@ -59,32 +92,23 @@ const Index = () => {
         setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, newMessage]);
         reply = await ChatRequest(id, message, 1, true);
 
-        const convertTime = (ampm, hour) => {
-          if (ampm === "오전") {
-            return hour;
-          } else if (ampm === "오후") {
-            return hour + 12;
-          }
-        };
-
         const plan = {
           user_id: id,
           plan: reply.plan,
           s_year: reply.s_year,
           s_month: reply.s_month,
           s_day: reply.s_day,
-          s_hour: convertTime(reply.s_ampm, reply.s_hour),
+          s_hour: reply.s_hour,
           s_minute: reply.s_minute,
           f_year: reply.f_year,
           f_month: reply.f_month,
           f_day: reply.f_day,
-          f_hour: convertTime(reply.f_ampm, reply.f_hour),
+          f_hour: reply.f_hour,
           f_minute: reply.f_minute,
           alarm: 15,
           color: 1,
         };
         setPlan(plan);
-        console.log(plan);
         reply.response = `일정이 다음과 같나요? 수정 후 완료 버튼을 눌러주세요~`;
       } else if (isTodo) {
         // Todo 일정 입력 대화인 경우
@@ -97,8 +121,17 @@ const Index = () => {
         reply = await ChatRequest(id, message, 0, false);
       }
 
-      const replyMessage = { text: reply.response, isMine: false };
-      const calendarTodoMessage = { text: reply, isMine: false };
+      let replyText = reply.response;
+      try {
+        const parsedReply = JSON.parse(reply.response);
+        if (parsedReply.response) {
+          replyText = parsedReply.response;
+        }
+      } catch (e) {
+        console.error("JSON 파싱 실패:", e);
+      }
+
+      const replyMessage = { text: replyText, isMine: false };
 
       if (isCalender) {
         setScheduleMessage((prevScheduleMessages) => [...prevScheduleMessages, replyMessage]);
@@ -106,6 +139,20 @@ const Index = () => {
         setTodoMessage((prevTodoMessage) => [...prevTodoMessage, replyMessage]);
       } else {
         setMessages((prevMessages) => [...prevMessages, replyMessage]);
+      }
+
+      // 일정 등록 완료 시 대화 내역 초기화
+      if (reply.response.includes("일정 등록이 완료되었습니다")) {
+        setIsCalender(false);
+        setPlan({});
+        setIsButtonDisabled(false);
+        fetchPreviousChatting();
+      }
+      // todo 등록 완료 시 대화 내역 초기화
+      if (reply.response.includes("할일 등록이 완료되었습니다")) {
+        setIsTodo(false);
+        setIsButtonDisabled(false);
+        fetchPreviousChatting();
       }
     } catch (error) {
       console.error("채팅 요청 실패:", error);
@@ -125,13 +172,19 @@ const Index = () => {
           plan={plan}
           isUpdateChatting={isUpdateChatting}
           setIsUpdateChatting={setIsUpdateChatting}
+          setMessages={setMessages}
+          setScheduleMessage={setScheduleMessage}
+          setTodoMessage={setTodoMessage}
+          setIsCalender={setIsCalender}
+          setIsTodo={setIsTodo}
+          setIsButtonDisabled={setIsButtonDisabled}
         />
       </ChatScreen>
       <ButtonContainer>
-        <PrimaryButton onClick={handleCalender} isActive={isCalender}>
+        <PrimaryButton onClick={handleCalender} isActive={isCalender} disabled={isButtonDisabled}>
           캘린더 입력
         </PrimaryButton>
-        <PrimaryButton onClick={handleToDo} isActive={isTodo}>
+        <PrimaryButton onClick={handleToDo} isActive={isTodo} disabled={isButtonDisabled}>
           TODO 입력
         </PrimaryButton>
       </ButtonContainer>
