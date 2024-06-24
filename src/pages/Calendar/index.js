@@ -26,7 +26,6 @@ const Calendar = () => {
   const [date, setDate] = useState(today);
   const [activeStartDate, setActiveStartDate] = useState(new Date());
   const [schedules, setSchedules] = useState([]);
-  const [toggle, setToggle] = useState(false);
   const [filteredSchedules, setFilteredSchedules] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
@@ -55,14 +54,15 @@ const Calendar = () => {
 
         const secondFormatDataArray = allSchedules.map((item) => ({
           id: item.id,
-          startDate: `${item.s_year}-${item.s_month}-${item.s_day} ${item.s_hour}:${item.s_minute}`,
-          endDate: `${item.f_year}-${item.f_month}-${item.f_day} ${item.f_hour}:${item.f_minute}`,
+          startDate: new Date(item.s_year, item.s_month - 1, item.s_day, item.s_hour, item.s_minute), // Date 객체로 변환
+          endDate: new Date(item.f_year, item.f_month - 1, item.f_day, item.f_hour, item.f_minute), // Date 객체로 변환
           title: item.plan,
           color: getColorByNumber(item.color),
           isDone: item.isDone,
         }));
 
         setSchedules(secondFormatDataArray);
+        setFilteredSchedules(secondFormatDataArray.filter((schedule) => moment(date).isSame(schedule.startDate, "day"))); // 초기 필터링 상태 설정
       } catch (error) {
         console.error("데이터를 가져오는 중 오류 발생:", error);
       }
@@ -104,7 +104,6 @@ const Calendar = () => {
   };
 
   const handleDayClick = (value) => {
-    console.log(value);
     const filter_schedules = schedules.filter(
       (schedule) =>
         moment(value).isSame(schedule.startDate, "day") ||
@@ -112,10 +111,7 @@ const Calendar = () => {
         (moment(value).isAfter(schedule.startDate, "day") && moment(value).isBefore(schedule.endDate, "day")),
     );
 
-    // 이전 상태와 비교하여 필요한 경우에만 업데이트
-    if (JSON.stringify(filter_schedules) !== JSON.stringify(filteredSchedules)) {
-      setFilteredSchedules(filter_schedules);
-    }
+    setFilteredSchedules(filter_schedules);
   };
 
   const handleDateChange = (newDate) => {
@@ -124,13 +120,16 @@ const Calendar = () => {
 
   const handleCompleteToggle = async (scheduleId) => {
     try {
-      // 완료 여부 토글
       const updatedSchedules = schedules.map((schedule) =>
         schedule.id === scheduleId ? { ...schedule, isDone: !schedule.isDone } : schedule,
       );
       setSchedules(updatedSchedules);
 
-      // 완료 여부 업데이트 API 호출
+      const updatedFilteredSchedules = filteredSchedules.map((schedule) =>
+        schedule.id === scheduleId ? { ...schedule, isDone: !schedule.isDone } : schedule,
+      );
+      setFilteredSchedules(updatedFilteredSchedules);
+
       await UpdatePlanDone(scheduleId);
     } catch (error) {
       console.error("완료 여부를 업데이트하는 중 오류 발생:", error);
@@ -144,7 +143,6 @@ const Calendar = () => {
 
   const closePopup = () => {
     setShowPopup(false);
-    // 팝업이 닫힐 때 토글 이미지를 업데이트
     if (selectedSchedule) {
       const updatedSchedules = schedules.map((schedule) =>
         schedule.id === selectedSchedule.id ? { ...schedule, isDone: selectedSchedule.isDone } : schedule,
@@ -152,75 +150,6 @@ const Calendar = () => {
       setSchedules(updatedSchedules);
     }
   };
-
-  const [toggleStates, setToggleStates] = useState([]);
-
-  useEffect(() => {
-    if (schedules.length > 0) {
-      // 스케줄이 로드된 후에 토글 상태 배열 초기화
-      const initialToggleStates = schedules.map((schedule) => schedule.isDone);
-      setToggleStates(initialToggleStates);
-
-      // isDone이 true인 스케줄에 대해서는 토글 상태를 업데이트
-      const updatedToggleStates = initialToggleStates.map((isDone) => (isDone ? true : false));
-      setToggle(updatedToggleStates);
-    }
-  }, [schedules]);
-
-  const handleToggle = async (index) => {
-    try {
-      const updatedToggleStates = toggleStates.map((state, i) => (i === index ? !state : state));
-      setToggleStates(updatedToggleStates);
-
-      const scheduleId = filteredSchedules[index].id;
-
-      const updatedFilteredSchedules = filteredSchedules.map((schedule, i) => ({
-        ...schedule,
-        opacity: updatedToggleStates[i] ? 0.5 : 1,
-      }));
-      setFilteredSchedules(updatedFilteredSchedules);
-
-      if (schedules.length > 0) {
-
-        const updatedSchedules = schedules.map((schedule) =>
-          schedule.id === scheduleId ? { ...schedule, isDone: updatedToggleStates[index] } : schedule,
-        );
-        setSchedules(updatedSchedules);
-
-        await UpdatePlanDone(scheduleId);
-      }
-    } catch (error) {
-      console.error("Error updating schedule completion:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (schedules.length > 0) {
-      // 스케줄이 로드된 후에 토글 상태 배열 초기화
-      const initialToggleStates = schedules.map((schedule) => schedule.isDone);
-      setToggleStates(initialToggleStates);
-
-      // isDone이 true인 스케줄에 대해서는 토글 상태를 업데이트
-      const updatedToggleStates = initialToggleStates.map((isDone) => (isDone ? true : false));
-      setToggle(updatedToggleStates);
-    }
-  }, [schedules]);
-
-  useEffect(() => {
-    // 토글 상태 변경 후 필터링
-    const filter_schedules = schedules.filter(
-      (schedule, index) =>
-        toggleStates[index] ||
-        moment(date).isSame(schedule.startDate, "day") ||
-        moment(date).isSame(schedule.endDate, "day") ||
-        (moment(date).isAfter(schedule.startDate, "day") && moment(date).isBefore(schedule.endDate, "day")),
-    );
-
-    // 이전 상태와 비교하여 필요한 경우에만 업데이트
-    if (JSON.stringify(filter_schedules) !== JSON.stringify(filteredSchedules)) {
-      setFilteredSchedules(filter_schedules);
-    }
-  }, [toggleStates, schedules, date]);
 
   const handleDelete = async (index) => {
     try {
@@ -289,18 +218,11 @@ const Calendar = () => {
             onActiveStartDateChange={({ activeStartDate }) => setActiveStartDate(activeStartDate)}
             onClickDay={handleDayClick}
             tileContent={({ date }) => {
-              const matchingSchedules = schedules.filter(
-                (schedule) =>
-                  moment(date).isBetween(schedule.startDate, schedule.endDate, "day", "[]") ||
-                  moment(date).isSame(schedule.startDate, "day") ||
-                  moment(date).isSame(schedule.endDate, "day"),
-              );
-
+              const matchingSchedules = schedules.filter((schedule) => moment(date).isSame(schedule.startDate, "day"));
               return matchingSchedules.map((matchingSchedule, index) => (
                 <StyledSchedule
                   color={matchingSchedule.color}
                   key={index}
-                  onClick={() => handleCompleteToggle(matchingSchedule.id)}
                   completed={matchingSchedule.isDone}
                   style={{ opacity: matchingSchedule.isDone ? 0.5 : 1 }} // 완료 여부에 따라 투명도 조절
                 >
@@ -311,24 +233,34 @@ const Calendar = () => {
           />
         </StyledCalendarWrapper>
       </Container>
-      <DetailContainer style={{ marginBottom: isMobile ? "10px" : 0 }}>
-        {filteredSchedules.length > 0 && (
-          <StyledScheduleContainer style={{ marginBottom: "5px" }}>
-            {filteredSchedules.map((schedule, index) => (
-              <StyledScheduleDetail key={index} style={{ opacity: schedule.isDone ? 0.5 : 1 }}>
-                <div style={{ alignItems: "center" }} onClick={() => handlePopup(schedule)}>
-                  <span style={{ color: "#A391FF" }}>
-                    {`${new Date(schedule.startDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}`}
-                  </span>
-                  <span style={{ width: "100px", marginLeft: "50px" }}>{schedule.title}</span>
-                </div>
-                <img src={xbutton} alt="일정 삭제하기" style={{ marginLeft: "50px" }} onClick={() => handleDelete(index)} />
-                <img src={toggleStates[index] ? toggle_on : toggle_off} alt="토클 활성화" onClick={() => handleToggle(index)} />
-              </StyledScheduleDetail>
-            ))}
-          </StyledScheduleContainer>
-        )}
-      </DetailContainer>
+      <div style={{ backgroundColor: "#e9f2ff", height: "270px", overflowY: "auto" }}>
+        <DetailContainer style={{ marginBottom: isMobile ? "10px" : 0 }}>
+          {filteredSchedules.length > 0 && (
+            <StyledScheduleContainer style={{ marginBottom: "5px" }}>
+              {filteredSchedules.map((schedule, index) => (
+                <StyledScheduleDetail key={index} style={{ opacity: schedule.isDone ? 0.5 : 1 }}>
+                  <div style={{ alignItems: "center" }} onClick={() => handlePopup(schedule)}>
+                    <span style={{ color: "#A391FF" }}>
+                      {`${new Date(schedule.startDate).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })} ~ ${new Date(schedule.endDate).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })}`}
+                    </span>
+                    <span style={{ width: "100px", marginLeft: "50px" }}>{schedule.title}</span>
+                  </div>
+                  <img src={xbutton} alt="일정 삭제하기" style={{ marginLeft: "50px" }} onClick={() => handleDelete(index)} />
+                  <img src={schedule.isDone ? toggle_on : toggle_off} alt="토글 활성화" onClick={() => handleCompleteToggle(schedule.id)} />
+                </StyledScheduleDetail>
+              ))}
+            </StyledScheduleContainer>
+          )}
+        </DetailContainer>
+      </div>
 
       {showPopup && (
         <>
