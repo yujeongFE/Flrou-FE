@@ -11,7 +11,7 @@ import { LoginRequest } from "../../components/api/Login/LoginRequest";
 import { SignUpRequest } from "../../components/api/Login/SignUpRequest";
 
 // FCM
-//import { messaging, getToken } from "../../core/notification/firebase.config.mjs";
+import { messaging, getToken } from "../../core/notification/firebase.config.mjs";
 import { registerServiceWorker } from "../../utils/notification";
 import axios from "axios";
 
