@@ -167,7 +167,7 @@ const Calendar = () => {
     }
   };
 
-  const saveSchedule = async (color, title, startDate, endDate, notificationInterval, s_color) => {
+  const saveSchedule = async (color, title, startDate, endDate, notificationInterval) => {
     try {
       const id = selectedSchedule.id;
       const notification = notificationInterval === null ? 15 : notificationInterval;
@@ -185,7 +185,7 @@ const Calendar = () => {
         endDate.getHours(),
         endDate.getMinutes(),
         notification,
-        s_color,
+        color,
       );
 
       setSchedules((prevSchedules) =>

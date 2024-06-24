@@ -167,7 +167,7 @@ const ChattingBubble = ({
     }
   }, [plan, isCalender, setIsUpdateChatting]);
 
-  const handleSave = async (selectedColor, title, notificationInterval) => {
+  const handleSave = async (selectedColor, title, startDate, endDate, notificationInterval) => {
     const colors = [
       "#ff4d6d",
       "#ffb563",

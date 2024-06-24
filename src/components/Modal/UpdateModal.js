@@ -146,7 +146,7 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
 
   const handleSave = () => {
     const s_color = getColorIndexByHashCode(selectedColor, colors);
-    onSave(selectedColor, title, notificationInterval);
+    onSave(s_color, title, schedule.startDate, schedule.endDate, notificationInterval);
   };
 
   const handleDeleteClick = async () => {
