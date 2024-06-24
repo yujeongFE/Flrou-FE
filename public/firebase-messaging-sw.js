@@ -26,7 +26,7 @@ self.addEventListener("push", function (e) {
 
 // 알림 눌렀을 때 이동
 self.addEventListener("notificationclick", function (event) {
-  const url = "http://localhost:5500/performanceChart";
+  const url = "http://localhost:5500/calendar";
   event.notification.close();
   event.waitUntil(clients.openWindow(url));
 });
