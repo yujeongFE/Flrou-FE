@@ -29,6 +29,10 @@ export const StyledCalendarWrapper = styled.div`
     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
     padding: 10px 5%;
     background-color: white;
+
+    @media (max-width: 768px) {
+      padding: 0px 0%;
+    }
   }
 
   /* 전체 폰트 컬러 */
@@ -186,7 +190,6 @@ export const StyledCalendarWrapper = styled.div`
   /* 활성화된 날짜 텍스트에 대한 스타일 */
   .react-calendar__tile--active abbr {
     color: #2ed4eb; /* 활성화된 날짜의 텍스트 색상 */
-    font-weight: bold; /* 텍스트 굵기 */
   }
 
   /* 선택한 날짜 스타일 적용 */
@@ -200,7 +203,8 @@ export const StyledCalendarWrapper = styled.div`
 
   @media (max-width: 768px) {
     .react-calendar__tile {
-      height: 70px; /* 날짜 버튼 상자의 높이를 줄임 */
+      height: 90px; /* 날짜 버튼 상자의 높이를 더 크게 설정 */
+      font-size: 16px; /* 날짜 폰트 크기를 키움 */
     }
   }
 `;
@@ -232,44 +236,51 @@ export const StyledDot = styled.div`
 
 export const StyledSchedule = styled.div`
   background-color: ${(props) => props.color};
-  padding: 6px;
+  padding: 3px;
   border-radius: 2px;
   cursor: pointer;
   color: white;
-  height: 15px;
+  height: auto;
   display: flex;
   align-items: center;
   width: 100%;
   /* 일정 상자 내용에 대한 스타일 */
-  font-size: 12px;
+  font-size: 16px;
   text-overflow: ellipsis; /* 내용이 넘칠 경우 생략 부호(...)로 표시 */
-  white-space: nowrap;
+  white-space: normal; /* 줄 바꿈 허용 */
+  word-wrap: break-word; /* 길이가 길 경우 단어 단위로 줄 바꿈 */
   margin-top: 2px;
+  @media (max-width: 768px) {
+    color: #2c2c2c;
+    font-size: 12px;
+    height: 13px;
+  }
 `;
 
 export const DetailContainer = styled.div`
-  margin-top: 50px;
-  padding: 50px 0;
   width: 100%;
   background-color: #e9f2ff;
   display: flex;
   justify-content: space-between; /* 텍스트 일렬 정렬 및 일정한 간격 */
   align-items: center;
-  flex-wrap: wrap; /* 너비를 넘어가면 줄 바꿈 */
   @media (max-width: 768px) {
     margin-top: 0px;
-    padding: 20px 0;
+    padding: 10px 0;
   }
 `;
 
 export const StyledScheduleContainer = styled.div`
+  overflow-x: hidden;
+  padding: 10px;
+  overflow-y: auto;
   display: flex;
-  backgroun-color: #e9f2ff;
+  background-color: #e9f2ff;
   flex-direction: column;
   z-index: 1;
   width: 80%;
   justify-content: center;
   margin: auto;
+  max-height: auto;
 `;
 
 export const StyledScheduleDetail = styled.div`
@@ -277,7 +288,7 @@ export const StyledScheduleDetail = styled.div`
   align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
-  width: 80%;
+  width: 100%;
   height: 50px;
   border-radius: 100px;
   background: rgba(255, 255, 255, 0.3);
@@ -300,13 +311,14 @@ export const StyledScheduleDetail = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
-    font-size: 18px;
+    height: 40px;
+    font-size: 16px;
     margin-top: 0px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     img {
       margin-right: 30px;
       width: 50px;
-      heigth: auto;
+      height: auto;
     }
   }
 `;
