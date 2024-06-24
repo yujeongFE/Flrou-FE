@@ -78,11 +78,11 @@ const useKakaoLogin = () => {
       if (signupResponse.data == "success") {
         setSuccess(true);
         navigate("/chatting");
-        localStorage.setItem("user_id", data.kakao_account.email);
+        localStorage.setItem("user_id", data.id);
       } else if (signupResponse.data == "duplicated user_id") {
         setSuccess(true);
         navigate("/chatting");
-        localStorage.setItem("user_id", data.kakao_account.email);
+        localStorage.setItem("user_id", data.id);
       } else {
         alert("카카오 회원가입/ 로그인에 실패했습니다.");
       }
