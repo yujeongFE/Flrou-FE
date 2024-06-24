@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 import PropTypes from "prop-types";
 
@@ -22,13 +22,22 @@ const fadeIn = keyframes`
 const MessageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  max-height: 80vh; /* 최대 높이 설정 */
+
+  &::-webkit-scrollbar {
+    display: none; /* 웹킷 브라우저에서 스크롤바 감추기 */
+  }
+  -ms-overflow-style: none; /* 인터넷 익스플로러에서 스크롤바 감추기 */
+  scrollbar-width: none; /* 파이어폭스에서 스크롤바 감추기 */
 `;
 
 // 내 말풍선 스타일
 const MyMessageBubble = styled.div`
-  width: 60%;
-  align-self: ${(props) => (props.isMine ? "flex-end" : "flex-start")};
-  background-color: ${(props) => (props.isMine ? "rgba(112, 143, 254, 0.48)" : "#ffffff")};
+  display: inline-block;
+  max-width: 60%;
+  align-self: flex-end;
+  background-color: rgba(112, 143, 254, 0.48);
   border-radius: 12px;
   padding: 10px;
   margin-bottom: 2.7vh;
@@ -59,9 +68,11 @@ const OpponentMessageContainer = styled.div`
 // 상대방 말풍선 스타일
 const OpponentMessageBubble = styled(MyMessageBubble)`
   max-width: 70%;
-  display: flex;
+  display: inline-block;
   align-items: center;
   margin-top: 2.7vh;
+  background-color: #ffffff; /* 배경색 설정 */
+  align-self: flex-start; /* 왼쪽 정렬 */
 `;
 
 // 캐릭터 이미지 스타일
@@ -79,30 +90,58 @@ const CharacterImage = styled.img`
 const UpdateModalContainer = styled.div`
   position: relative;
   z-index: 1;
+  margin-bottom: 180px;
 `;
 
-const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, isTodo, plan, isUpdateChatting, setIsUpdateChatting }) => {
+const ChattingBubble = ({
+  messages,
+  scheduleMessage,
+  todoMessage,
+  isCalender,
+  isTodo,
+  plan,
+  isUpdateChatting,
+  setIsUpdateChatting,
+  setScheduleMessage,
+  setTodoMessage,
+  setIsCalender,
+  setIsTodo,
+  setIsButtonDisabled,
+}) => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [success, setSuccess] = useState(false);
   const id = localStorage.getItem("user_id");
+  const messageEndRef = useRef(null);
+  const scheduleEndRef = useRef(null);
 
-  const isValidDate = (date) => {
-    return date instanceof Date && !isNaN(date);
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const isValidNumber = (value) => {
-    return typeof value === "number" && !isNaN(value);
+  const scrollToStart = () => {
+    scheduleEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const getValidDate = (year, month, day, hour, minute) => {
-    return new Date(
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    scrollToStart();
+  }, [isCalender, isTodo]);
+
+  const isValidDate = (date) => date instanceof Date && !isNaN(date);
+
+  const isValidNumber = (value) => typeof value === "number" && !isNaN(value);
+
+  const getValidDate = (year, month, day, hour, minute) =>
+    new Date(
       isValidNumber(year) ? year : new Date().getFullYear(),
       isValidNumber(month) ? month - 1 : new Date().getMonth(),
       isValidNumber(day) ? day : new Date().getDate(),
       isValidNumber(hour) ? hour : 0,
       isValidNumber(minute) ? minute : 0,
     );
-  };
 
   useEffect(() => {
     if (isCalender && Object.keys(plan).length !== 0) {
@@ -126,7 +165,7 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
       setSelectedSchedule(updatedPlan);
       setIsUpdateChatting(true);
     }
-  }, [plan, isCalender]);
+  }, [plan, isCalender, setIsUpdateChatting]);
 
   const handleSave = async (selectedColor, title) => {
     const colors = [
@@ -193,7 +232,6 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
         setScheduleMessage([]);
         setTodoMessage([]);
         setIsButtonDisabled(false);
-        fetchPreviousChatting();
       }
     } catch (error) {
       console.error("일정 등록 실패:", error);
@@ -205,97 +243,101 @@ const ChattingBubble = ({ messages, scheduleMessage, todoMessage, isCalender, is
   };
 
   return (
-    <MessageContainer>
-      {isCalender && (
-        <>
-          <OpponentMessageContainer>
-            <CharacterImage src={Character} alt="character" />
-            <OpponentMessageBubble isMine={false}>{"일정을 말씀해주세요~!"}</OpponentMessageBubble>
-          </OpponentMessageContainer>
-          {scheduleMessage.map((message, index) =>
+    <>
+      <MessageContainer style={{ overflowY: "auto" }}>
+        {isCalender && (
+          <>
+            <OpponentMessageContainer>
+              <CharacterImage src={Character} alt="character" />
+              <OpponentMessageBubble isMine={false}>{"일정을 말씀해주세요~!"}</OpponentMessageBubble>
+            </OpponentMessageContainer>
+            {scheduleMessage.map((message, index) =>
+              message.isMine ? (
+                <MyMessageBubble key={index} isMine={true} textLength={message.text.length}>
+                  {message.text}
+                </MyMessageBubble>
+              ) : (
+                <>
+                  <OpponentMessageContainer style={{ display: "flex", alignItems: "flex-start" }}>
+                    <CharacterImage src={Character} alt="character" />
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
+                      <UpdateModalContainer key={index}>
+                        <UpdateModal schedule={selectedSchedule} onClose={toggleUpdateModal} onSave={handleSave} isPopup={false} />
+                      </UpdateModalContainer>
+                      {success && (
+                        <OpponentMessageContainer>
+                          <CharacterImage src={Character} alt="character" />
+                          <OpponentMessageBubble style={{ marginTop: "20px", left: "-70px" }} isMine={false}>
+                            {"일정 등록이 완료되었습니다"}
+                          </OpponentMessageBubble>
+                        </OpponentMessageContainer>
+                      )}
+                    </div>
+                  </OpponentMessageContainer>
+                </>
+              ),
+            )}
+          </>
+        )}
+        {/* 할 일 메시지 */}
+        {isTodo && (
+          <>
+            <OpponentMessageContainer>
+              <CharacterImage src={Character} alt="character" />
+              <OpponentMessageBubble isMine={false}>{"오늘의 할일을 말씀해주세요~!"}</OpponentMessageBubble>
+            </OpponentMessageContainer>
+            {todoMessage.map((message, index) =>
+              message.isMine ? (
+                <MyMessageBubble key={index} isMine={true} textLength={message.text.length}>
+                  {message.text}
+                </MyMessageBubble>
+              ) : (
+                <OpponentMessageContainer key={index}>
+                  <CharacterImage src={Character} alt="character" />
+                  <OpponentMessageBubble isMine={false}>{`Todo 작성이 완료되었습니다~`}</OpponentMessageBubble>
+                </OpponentMessageContainer>
+              ),
+            )}
+          </>
+        )}
+
+        {/* 일반 대화 메시지 */}
+        {!isCalender &&
+          !isTodo &&
+          messages.map((message, index) =>
             message.isMine ? (
               <MyMessageBubble key={index} isMine={true} textLength={message.text.length}>
                 {message.text}
               </MyMessageBubble>
             ) : (
               <>
-                <OpponentMessageContainer style={{ display: "flex", alignItems: "flex-start" }}>
-                <CharacterImage src={Character} alt="character" />
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <OpponentMessageContainer key={index}>
+                  <CharacterImage src={Character} alt="character" />
                   <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
-                    <UpdateModalContainer key={index}>
-                    <UpdateModal schedule={selectedSchedule} onClose={toggleUpdateModal} onSave={handleSave} isPopup={false} />
-                  </UpdateModalContainer>
-                  {success && (
-                    <OpponentMessageContainer>
-                      <CharacterImage src={Character} alt="character" />
-                      <OpponentMessageBubble style={{ marginTop: "500px", left: "-70px" }} isMine={false}>
-                        {"일정 등록이 완료되었습니다"}
-                      </OpponentMessageBubble>
-                    </OpponentMessageContainer>
-                  )}
-                </div>
-              </OpponentMessageContainer>
+                </OpponentMessageContainer>
+                {isUpdateChatting && (
+                  <OpponentMessageContainer key={index}>
+                    <CharacterImage src={Character} alt="character" />
+                    <OpponentMessageBubble>
+                      <UpdateModal
+                        style={{ width: "200px" }}
+                        key={`modal-${index}`}
+                        schedule={plan}
+                        onSave={handleSave}
+                        onClose={toggleUpdateModal}
+                        isPopup={false}
+                      />
+                    </OpponentMessageBubble>
+                  </OpponentMessageContainer>
+                )}
               </>
             ),
           )}
-        </>
-      )}
-      {/* 할 일 메시지 */}
-      {isTodo && (
-        <>
-          <OpponentMessageContainer>
-            <CharacterImage src={Character} alt="character" />
-            <OpponentMessageBubble isMine={false}>{"오늘의 할일을 말씀해주세요~!"}</OpponentMessageBubble>
-          </OpponentMessageContainer>
-          {todoMessage.map((message, index) =>
-            message.isMine ? (
-              <MyMessageBubble key={index} isMine={true} textLength={message.text.length}>
-                {message.text}
-              </MyMessageBubble>
-            ) : (
-              <OpponentMessageContainer key={index}>
-                <CharacterImage src={Character} alt="character" />
-                <OpponentMessageBubble isMine={false}>{`Todo 작성이 완료되었습니다~`}</OpponentMessageBubble>
-              </OpponentMessageContainer>
-            ),
-          )}
-        </>
-      )}
-
-      {/* 일반 대화 메시지 */}
-      {!isCalender &&
-        !isTodo &&
-        messages.map((message, index) =>
-          message.isMine ? (
-            <MyMessageBubble key={index} isMine={true} textLength={message.text.length}>
-              {message.text}
-            </MyMessageBubble>
-          ) : (
-            <>
-            <OpponentMessageContainer key={index}>
-              <CharacterImage src={Character} alt="character" />
-              <OpponentMessageBubble isMine={false}>{message.text}</OpponentMessageBubble>
-              </OpponentMessageContainer>
-              {isUpdateChatting && (
-                <OpponentMessageContainer key={index}>
-                  <CharacterImage src={Character} alt="character" />
-                  <OpponentMessageBubble>
-                    <UpdateModal
-                      style={{ width: "200px", height: "200px" }}
-                      key={`modal-${index}`}
-                      schedule={plan}
-                      onSave={handleSave}
-                      onClose={toggleUpdateModal}
-                      isPopup={false}
-                    />
-                  </OpponentMessageBubble>
-                </OpponentMessageContainer>
-              )}
-            </>
-          ),
-        )}
-    </MessageContainer>
+        <div ref={messageEndRef} />
+        <div ref={scheduleEndRef} />
+      </MessageContainer>
+    </>
   );
 };
 
