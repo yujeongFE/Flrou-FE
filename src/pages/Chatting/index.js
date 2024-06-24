@@ -76,7 +76,7 @@ const Index = () => {
     if (!isCalender) {
       setIsTodo((prevIsActive) => !prevIsActive);
       setChatType(1);
-      setTodoMessage([]); // todo 대화 초기화 
+      setTodoMessage([]); // todo 대화 초기화
       setIsUpdateChatting(false); // 채팅 입력 금지 해제
       setIsButtonDisabled(true);
     }
@@ -105,8 +105,8 @@ const Index = () => {
           f_day: reply.f_day,
           f_hour: reply.f_hour,
           f_minute: reply.f_minute,
-          alarm: 15,
-          color: 1,
+          alarm: reply.alarm,
+          color: reply.color,
         };
         setPlan(plan);
         reply.response = `일정이 다음과 같나요? 수정 후 완료 버튼을 눌러주세요~`;

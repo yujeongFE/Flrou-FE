@@ -167,7 +167,7 @@ const ChattingBubble = ({
     }
   }, [plan, isCalender, setIsUpdateChatting]);
 
-  const handleSave = async (selectedColor, title) => {
+  const handleSave = async (selectedColor, title, notificationInterval) => {
     const colors = [
       "#ff4d6d",
       "#ffb563",
@@ -192,18 +192,16 @@ const ChattingBubble = ({
     ];
 
     const getColorIndexByHashCode = (hashCode, colors) => {
-      // 해시코드가 배열에 포함되어 있는지 확인
       const index = colors.indexOf(hashCode);
-
-      // 포함되어 있다면 인덱스 반환, 아니면 -1 반환
-      return index !== -1 ? index : -1;
+      return index !== -1 ? index : 3; // 기본 색상 인덱스를 3으로 설정
     };
 
     const s_color = getColorIndexByHashCode(selectedColor, colors);
+    const notification = notificationInterval !== null ? notificationInterval : 0;
     try {
       const response = await CreatePlanRequest(
         id,
-        title,
+        plan.plan,
         plan.s_year,
         plan.s_month,
         plan.s_day,
@@ -214,7 +212,7 @@ const ChattingBubble = ({
         plan.f_day,
         plan.f_hour,
         plan.f_minute,
-        plan.alarm,
+        notification,
         s_color,
       );
 

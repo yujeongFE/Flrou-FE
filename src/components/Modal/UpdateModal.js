@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -16,6 +16,13 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
   const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date(schedule.endDate));
   const [notificationInterval, setNotificationInterval] = useState(null);
+
+  useEffect(() => {
+    setTitle(schedule.title);
+    setSelectedColor(schedule.color);
+    setSelectedStartDate(new Date(schedule.startDate));
+    setSelectedEndDate(new Date(schedule.endDate));
+  }, [schedule]);
 
   const colors = [
     "#ff4d6d",
@@ -122,7 +129,6 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
 
   const handleColorSelect = (color) => {
     setSelectedColor(color === selectedColor ? "" : color); // 같은 색상 버튼을 다시 클릭하면 선택 해제
-    console.log(color);
     setDropdownOpen(false);
   };
 
@@ -140,7 +146,7 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
 
   const handleSave = () => {
     const s_color = getColorIndexByHashCode(selectedColor, colors);
-    onSave(index, selectedColor, title, selectedStartDate, selectedEndDate, notificationInterval, s_color);
+    onSave(selectedColor, title, notificationInterval);
   };
 
   const handleDeleteClick = async () => {
@@ -217,6 +223,7 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>알림 설정:</p>
         <select value={notificationInterval} onChange={handleNotificationIntervalChange} style={ColorContainer}>
+          <option value={0}>알림 없음</option>
           <option value={15}>15분</option>
           <option value={30}>30분</option>
           <option value={45}>45분</option>
@@ -240,10 +247,10 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
 
 UpdateModal.propTypes = {
   schedule: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired, // Add index prop type
+  index: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired, // Add onDelete prop type
+  onDelete: PropTypes.func.isRequired,
   isPopup: PropTypes.bool,
 };
 
