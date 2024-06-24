@@ -104,6 +104,7 @@ const Calendar = () => {
   };
 
   const handleDayClick = (value) => {
+    console.log(value);
     const filter_schedules = schedules.filter(
       (schedule) =>
         moment(value).isSame(schedule.startDate, "day") ||
