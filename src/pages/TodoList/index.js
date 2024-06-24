@@ -130,7 +130,7 @@ const Index = () => {
           )
         })}
 
-        {todoListActivate.length > 0 && todoListNonActivate.length > 0 &&
+        {todoListActivate && todoListNonActivate && todoListActivate.length > 0 && todoListNonActivate.length > 0 &&
           <Line />
         }
 
