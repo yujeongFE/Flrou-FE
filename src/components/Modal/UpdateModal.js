@@ -6,8 +6,9 @@ import detail_arrow from "../../assets/detail_arrow.png";
 import detail_close_arrow from "../../assets/detail_close_arrow.png";
 import "./DatePicker.css";
 
-const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
+const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) => {
   if (!schedule) return null;
+  console.log(schedule);
 
   const [title, setTitle] = useState(schedule.title);
   const [selectedColor, setSelectedColor] = useState(schedule.color);
@@ -76,6 +77,20 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
     marginRight: "30px",
   };
 
+  const deleteButtonStyle = {
+    ...buttonStyle,
+    background: "#FD6A6A",
+    color: "#FFF",
+    marginRight: "30px",
+  };
+
+  const closeBtnStyle = {
+    ...buttonStyle,
+    background: "#ccc",
+    color: "#fff",
+    marginRight: "0px",
+  };
+
   const TitleContainer = {
     ...buttonStyle,
     fontSize: "15px",
@@ -125,7 +140,13 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
 
   const handleSave = () => {
     const s_color = getColorIndexByHashCode(selectedColor, colors);
-    onSave(selectedColor, title, selectedStartDate, selectedEndDate, notificationInterval, s_color);
+    onSave(index, selectedColor, title, selectedStartDate, selectedEndDate, notificationInterval, s_color);
+  };
+
+  const handleDeleteClick = async () => {
+    console.log(schedule.id);
+    onDelete(schedule.id);
+    onClose();
   };
 
   return (
@@ -176,8 +197,7 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
                 top: "calc(100% + 5px)",
                 left: "50%",
                 transform: "translateX(-50%)",
-                backgroundColor: "#FFF",
-                borderRadius: "5px",
+                backgroundColor: "#fff",
                 boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
                 padding: "5px",
                 zIndex: 999,
@@ -203,11 +223,14 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
           <option value={60}>1시간</option>
         </select>
       </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
         <button style={saveButtonStyle} onClick={handleSave}>
           일정 수정
         </button>
-        <button style={buttonStyle} onClick={onClose}>
+        <button style={deleteButtonStyle} onClick={handleDeleteClick}>
+          삭제
+        </button>
+        <button style={closeBtnStyle} onClick={onClose}>
           닫기
         </button>
       </div>
@@ -217,8 +240,10 @@ const UpdateModal = ({ schedule, onClose, onSave, isPopup }) => {
 
 UpdateModal.propTypes = {
   schedule: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired, // Add index prop type
   onClose: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired, // Add onDelete prop type
   isPopup: PropTypes.bool,
 };
 
