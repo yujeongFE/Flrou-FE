@@ -121,16 +121,7 @@ const Index = () => {
         reply = await ChatRequest(id, message, 0, false);
       }
 
-      let replyText = reply.response;
-      try {
-        const parsedReply = JSON.parse(reply.response);
-        if (parsedReply.response) {
-          replyText = parsedReply.response;
-        }
-      } catch (e) {
-        console.error("JSON 파싱 실패:", e);
-      }
-
+      let replyText = reply.response || reply.message; // response, message 응답 렌더링
       const replyMessage = { text: replyText, isMine: false };
 
       if (isCalender) {
@@ -142,14 +133,14 @@ const Index = () => {
       }
 
       // 일정 등록 완료 시 대화 내역 초기화
-      if (reply.response.includes("일정 등록이 완료되었습니다")) {
+      if (replyText.includes("일정 등록이 완료되었습니다")) {
         setIsCalender(false);
         setPlan({});
         setIsButtonDisabled(false);
         fetchPreviousChatting();
       }
       // todo 등록 완료 시 대화 내역 초기화
-      if (reply.response.includes("할일 등록이 완료되었습니다")) {
+      if (replyText.includes("할일 등록이 완료되었습니다")) {
         setIsTodo(false);
         setIsButtonDisabled(false);
         fetchPreviousChatting();
