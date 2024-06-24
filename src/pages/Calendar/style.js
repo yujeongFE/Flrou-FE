@@ -240,19 +240,20 @@ export const StyledSchedule = styled.div`
   border-radius: 2px;
   cursor: pointer;
   color: white;
-  height: auto;
+  height: 15px;
   display: flex;
   align-items: center;
   width: 100%;
   /* 일정 상자 내용에 대한 스타일 */
-  font-size: 16px;
+  font-size: 15px;
   text-overflow: ellipsis; /* 내용이 넘칠 경우 생략 부호(...)로 표시 */
-  white-space: normal; /* 줄 바꿈 허용 */
-  word-wrap: break-word; /* 길이가 길 경우 단어 단위로 줄 바꿈 */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 부분 숨김 */
   margin-top: 2px;
+
   @media (max-width: 768px) {
     color: #2c2c2c;
-    font-size: 12px;
+    font-size: 11px;
     height: 13px;
   }
 `;
@@ -284,41 +285,39 @@ export const StyledScheduleContainer = styled.div`
 `;
 
 export const StyledScheduleDetail = styled.div`
-  justify-content: center;
-  align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
-  width: 100%;
-  height: 50px;
-  border-radius: 100px;
+  width: 95%;
+  height: auto;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.3);
   background-color: #fff;
   border: 1px solid #a391ff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  font-size: 24px;
+  font-size: 18px;
   color: #2c2c2c;
-  span {
-    margin-left: 30px;
-  }
+  padding: 10px;
+
   img {
-    margin-right: 30px;
+    width: 40px;
+    height: auto;
+    cursor: pointer;
   }
-  z-index: 0;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
 
   @media (max-width: 768px) {
-    width: 100%;
-    height: 40px;
     font-size: 16px;
-    margin-top: 0px;
-    margin-bottom: 20px;
+    height: auto;
+    padding: 8px;
+
     img {
-      margin-right: 30px;
-      width: 50px;
-      height: auto;
+      width: 30px;
     }
   }
 `;
