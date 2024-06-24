@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from "recharts";
 import styled from "styled-components";
 import character from "../../assets/flrou_character.png";
+
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 997; // Modal보다 낮은 z-index 설정
+`;
 
 const Modal = styled.div`
   position: fixed;
@@ -20,12 +31,14 @@ const Modal = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
+  justify-content: center; /* 중앙 정렬 추가 */
 `;
 
 const Paragraph = styled.p`
   margin: 0 0 10px 0;
   font-size: 18px;
   font-weight: bold;
+  text-align: center; /* 중앙 정렬 추가 */
 `;
 
 const BlueText = styled.span`
@@ -42,6 +55,7 @@ const Text = styled.p`
   margin: 10px 0;
   font-size: 14px;
   line-height: 1.5;
+  text-align: center; /* 중앙 정렬 추가 */
 `;
 
 const Button = styled.button`
@@ -59,9 +73,9 @@ const Button = styled.button`
   }
 `;
 
-const PerformanceChart = ({ isActive, successCount, currentYear, currentDate }) => {
+const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, user_id, force }) => {
   const [data, setData] = useState([]);
-  const [showModal, setShowModal] = useState(true); // 항상 모달 띄우기
+  const [showModal, setShowModal] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
@@ -101,8 +115,25 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate }) 
     generateData();
   }, [isActive, successCount, currentYear]);
 
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/user/setForce", {
+        user_id: user_id,
+        cur_year: currentYear,
+        cur_month: currentDate,
+        alarm: 1,
+      });
+      console.log("Response from server:", response.data);
+      localStorage.setItem("popupConfirmed", "true");
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error sending request:", error);
+    }
+  };
+
   return (
     <div style={{ position: "relative", backgroundColor: "#fff", textAlign: "left", width: "100%", height: "100%" }}>
+      {showModal && <Backdrop />}
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={data} margin={{ top: 5, right: 30, left: 5, bottom: 5 }}>
           <CartesianGrid vertical={false} />
@@ -110,7 +141,7 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate }) 
           <YAxis domain={[0, 100]} />
           <Tooltip cursor={{ fill: "rgba(207, 239, 255, 0.7)" }} formatter={(value) => `${value}%`} />
           <Legend />
-          <Bar dataKey="완료율" stackId="a" fill="#FFD700" barSize={30} onClick={(data, index) => setHoveredIndex(index)} />
+          <Bar dataKey="완료율" stackId="a" fill="#75b1f6" barSize={30} onClick={(data, index) => setHoveredIndex(index)} />
           <Bar dataKey="미완료율" stackId="a" fill="#FF6347" barSize={30} onClick={(data, index) => setHoveredIndex(index)} />
           <ReferenceLine y={50} stroke="#FFC2C2" strokeWidth={2} label={{ value: "50", position: "right", dy: 5 }} />
         </BarChart>
@@ -118,7 +149,7 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate }) 
       {showModal && (
         <Modal>
           <Paragraph>
-            {`${currentDate - 1}월의 일정 미완료율이 `}
+            {`${currentDate - 1}월의 일정 완료율이 `}
             <BlueText>{data.length > 0 ? `${data[0].미완료율}%` : "데이터 없음"}</BlueText>
             {`입니다.`}
           </Paragraph>
@@ -130,7 +161,7 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate }) 
             <br />
             (오늘부터 한달 간 모든 일정에 알림이 설정됩니다.)
           </Text>
-          <Button onClick={() => setShowModal(false)}>확인</Button>
+          <Button onClick={handleSubmit}>확인</Button>
         </Modal>
       )}
     </div>

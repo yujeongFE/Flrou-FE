@@ -87,7 +87,7 @@ const Graph = () => {
       <Header />
       <Center>
         <CenteredContent>
-          <span>완료율 그래프</span>
+          <span></span>
         </CenteredContent>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
           <PeriodText>
@@ -110,6 +110,7 @@ const Graph = () => {
         currentYear={selectYear}
         currentDate={selectMonth}
         successCount={successCount}
+        user_id={user_id}
       />
       {isMobile && <BottomBar />} {/* 하단 바 추가 */}
     </Container>
