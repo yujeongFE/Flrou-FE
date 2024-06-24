@@ -152,9 +152,9 @@ const Calendar = () => {
     }
   };
 
-  const handleDelete = async (index) => {
+  const handleDelete = async (id) => {
     try {
-      const scheduleId = filteredSchedules[index].id;
+      const scheduleId = id;
       await DeletePlanRequest(scheduleId);
 
       const updatedSchedules = schedules.filter((schedule) => schedule.id !== scheduleId);
@@ -254,7 +254,6 @@ const Calendar = () => {
                     </span>
                     <span style={{ width: "100px", marginLeft: "50px" }}>{schedule.title}</span>
                   </div>
-                  <img src={xbutton} alt="일정 삭제하기" style={{ marginLeft: "50px" }} onClick={() => handleDelete(index)} />
                   <img src={schedule.isDone ? toggle_on : toggle_off} alt="토글 활성화" onClick={() => handleCompleteToggle(schedule.id)} />
                 </StyledScheduleDetail>
               ))}
@@ -277,7 +276,7 @@ const Calendar = () => {
             }}
             onClick={closePopup}
           />
-          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveSchedule} isPopup={true} />
+          <UpdateModal schedule={selectedSchedule} onClose={closePopup} onSave={saveSchedule} isPopup={true} onDelete={handleDelete} />
         </>
       )}
       {isMobile && <BottomBar />}
