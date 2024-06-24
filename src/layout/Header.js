@@ -1,10 +1,8 @@
-// src/layout/Header.js
-
 import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "../assets/sidebar_button.png";
-import Bell from "../assets/bell.svg";
 import HeaderMenu from "../components/Link/HeadMenu";
+import useIsMobile from "../hooks/useIsMobile";
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -27,6 +25,10 @@ const SideBarButton = styled.img`
   min-width: 30px;
   min-height: 21px;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const LogoText = styled.span`
@@ -41,17 +43,15 @@ const LogoText = styled.span`
   font-weight: 400;
   line-height: normal;
   letter-spacing: 1.28px;
-`;
 
-const BellButton = styled.img`
-  width: 2vw;
-  height: 4vh;
-  min-width: 26px;
-  min-height: 24px;
+  @media (max-width: 768px) {
+    font-size: 48px; /* 모바일 버전에서 로고 텍스트 크기 줄이기 */
+  }
 `;
 
 const Header = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -59,12 +59,12 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <SideBarButton src={Button} alt={"sidebar button"} onClick={toggleSidebar} />
+      {!isMobile && <SideBarButton src={Button} alt={"sidebar button"} onClick={toggleSidebar} />}
       <HeaderMenu isOpen={isSidebarOpen} toggleSidebar={setSidebarOpen} />
       <FlexContainer>
         <LogoText>FLROU</LogoText>
       </FlexContainer>
-      <BellButton src={Bell} alt={"bell button"} />
+      <div style={{ width: "2vw", height: "4vh" }} />
     </HeaderContainer>
   );
 };
