@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import Background from "../../layout/Background";
 import Header from "../../layout/Header";
 import PrimaryButton from "../../components/Button/PrimaryButton";
 import ChatInput from "../../components/Chat/ChatSection";
@@ -153,6 +153,7 @@ const Index = () => {
   return (
     <Container>
       <Header />
+      {!isMobile && <Background />}
       <ChatScreen>
         <ChattingBubble
           messages={messages}

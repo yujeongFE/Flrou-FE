@@ -7,11 +7,12 @@ import useIsMobile from "../hooks/useIsMobile";
 const HeaderContainer = styled.header`
   width: 100%;
   height: 10.6vh;
-  background-color: #fff;
+  background-color: transparent;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
+  z-index: 2;
 `;
 
 const FlexContainer = styled.div`
@@ -20,6 +21,7 @@ const FlexContainer = styled.div`
 `;
 
 const SideBarButton = styled.img`
+  z-index: 1;
   width: 2.3vw;
   height: 3.2vh;
   min-width: 30px;
