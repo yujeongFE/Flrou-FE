@@ -32,12 +32,11 @@ const StyledInput = styled.input`
 
 const SendIcon = styled.img`
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-bottom: 100px; /* 추가 */
-  margin-left: 10px; /* SendIcon과 Input 사이의 간격을 조정하기 위해 추가 */
-  width: 2vw;
-  height: 5vh;
-  cursor: not-allowed;
+  align-items: center;
+  margin-bottom: 100px;
+  margin-left: 10px;
+  width: 3vw;
+  height: 6vh;
 
   &:hover {
     content: auto;
