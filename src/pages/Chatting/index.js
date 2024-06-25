@@ -66,7 +66,6 @@ const Index = () => {
       setChatType(1);
       setIsButtonDisabled(true); // 캘린더 버튼 클릭시 todo 버튼 동시에 눌리는 동작 방지
       setScheduleMessage([]); // 캘린더 대화 초기화
-      setPlan({}); // 플랜 초기화
       setIsUpdateChatting(false); // 채팅 입력 금지 해제
       await fetchPreviousChatting();
     }
@@ -135,7 +134,6 @@ const Index = () => {
       // 일정 등록 완료 시 대화 내역 초기화
       if (replyText.includes("일정 등록이 완료되었습니다")) {
         setIsCalender(false);
-        setPlan({});
         setIsButtonDisabled(false);
         fetchPreviousChatting();
       }

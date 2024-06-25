@@ -56,7 +56,7 @@ const ChatInput = ({ onSendMessage, isAccess }) => {
 
   const handleSendMessage = () => {
     // 전송 버튼이 활성화되어 있을 때만 메시지를 전송하도록 조건 추가
-    if (message.trim() !== "" && !isAccess) {
+    if (message.trim() !== "") {
       onSendMessage(message);
       setMessage("");
     }
