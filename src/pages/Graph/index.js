@@ -7,6 +7,7 @@ import { CompletionRateRequest } from "../../components/api/Graph/CompletionRate
 import BottomBar from "../../components/Link/BottomMenu";
 import useIsMobile from "../../hooks/useIsMobile";
 import { DateTimeButton } from "./style";
+import Background from "../../layout/Background";
 
 const Graph = () => {
   const user_id = localStorage.getItem("user_id");
@@ -20,7 +21,7 @@ const Graph = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const reply = await CompletionRateRequest(user_id, selectYear, selectMonth);
+        const reply = await CompletionRateRequest(user_id, selectYear, selectMonth + 1);
         setSuccessCount(reply);
       } catch (error) {
         console.error("데이터 가져오기 에러:", error);
@@ -84,6 +85,7 @@ const Graph = () => {
 
   return (
     <>
+      <Background />
       <Container>
         <Header />
         <Center>
@@ -109,7 +111,7 @@ const Graph = () => {
           style={{ marginTop: "50px", width: "80%" }}
           isActive={isActive}
           currentYear={selectYear}
-          currentDate={selectMonth}
+          currentDate={selectMonth + 1}
           successCount={successCount}
           user_id={user_id}
         />

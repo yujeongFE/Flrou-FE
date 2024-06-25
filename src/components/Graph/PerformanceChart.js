@@ -11,7 +11,7 @@ const Backdrop = styled.div`
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 997; // Modal보다 낮은 z-index 설정
+  z-index: 997;
 `;
 
 const Modal = styled.div`
@@ -47,13 +47,12 @@ const BlueText = styled.span`
 `;
 
 const StyledImage = styled.img`
-  width: 80px;
+  width: 100px;
   height: auto;
-  margin-bottom: 20px; /* Increased margin for better spacing */
 `;
 
 const Text = styled.p`
-  margin: 10px 0 20px; /* Adjusted margins for better spacing */
+  margin: 10px 0 20px;
   font-size: 14px;
   line-height: 1.5;
 `;
@@ -93,11 +92,13 @@ const ToggleButton = styled.button`
   }
 `;
 
-const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, user_id, force }) => {
+const PerformanceChart = ({ isActive, successCount, currentYear, date, user_id, force }) => {
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [notificationTime, setNotificationTime] = useState("00:15"); // 초기 알림 시간 설정 (00:15)
+  const currentDateMonth = new Date();
+  const currentDate = currentDateMonth.getMonth() + 1;
 
   useEffect(() => {
     const generateData = () => {
@@ -199,6 +200,8 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, us
             많은 일정에 <BlueText>알림</BlueText>을 설정하지 않았어요
             <br />
             오늘부터 <BlueText>한 달간</BlueText> 모든 일정에 알림이 설정됩니다.
+            <br />
+            <BlueText>알림 시간</BlueText>을 선택해주세요~
           </Text>
           <ToggleContainer>{renderToggleButtons()}</ToggleContainer>
           <Button onClick={handleSubmit}>확인</Button>
