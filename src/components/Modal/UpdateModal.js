@@ -16,12 +16,14 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
   const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date(schedule.endDate));
   const [notificationInterval, setNotificationInterval] = useState(null);
+  const [alarm, setAlarm] = useState[schedule.alarm];
 
   useEffect(() => {
     setTitle(schedule.title);
     setSelectedColor(schedule.color);
     setSelectedStartDate(new Date(schedule.startDate));
     setSelectedEndDate(new Date(schedule.endDate));
+    setAlarm(schedule.alarm);
   }, [schedule]);
 
   const colors = [
@@ -222,7 +224,7 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
       </div>
       <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
         <p style={{ marginRight: "20px", marginBottom: "0", width: "100px" }}>알림 설정:</p>
-        <select value={notificationInterval} onChange={handleNotificationIntervalChange} style={ColorContainer}>
+        <select value={alarm} onChange={handleNotificationIntervalChange} style={ColorContainer}>
           <option value={0}>알림 없음</option>
           <option value={15}>15분</option>
           <option value={30}>30분</option>

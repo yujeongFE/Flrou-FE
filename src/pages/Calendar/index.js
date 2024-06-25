@@ -60,6 +60,7 @@ const Calendar = () => {
           title: item.plan,
           color: getColorByNumber(item.color),
           isDone: item.isDone,
+          alarm: item.alarm,
         }));
 
         setSchedules(secondFormatDataArray);
@@ -168,10 +169,12 @@ const Calendar = () => {
     }
   };
 
-  const saveSchedule = async (color, title, startDate, endDate, notificationInterval) => {
+  const saveSchedule = async (colorIndex, title, startDate, endDate, notificationInterval) => {
     try {
       const id = selectedSchedule.id;
       const notification = notificationInterval === null ? 15 : notificationInterval;
+      const color = colors[colorIndex];
+
       await UpdatePlanRequest(
         id,
         title,

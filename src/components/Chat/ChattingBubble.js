@@ -101,6 +101,7 @@ const ChattingBubble = ({
 }) => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [scolor, setScolor] = useState("");
   const id = localStorage.getItem("user_id");
 
   const isValidDate = (date) => {
@@ -137,7 +138,7 @@ const ChattingBubble = ({
         title: plan.plan,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
-        color: plan.color || null,
+        color: scolor || null,
       };
 
       setSelectedSchedule(updatedPlan);
@@ -174,7 +175,9 @@ const ChattingBubble = ({
       return index !== -1 ? index : 3; // 기본 색상 인덱스를 3으로 설정
     };
 
+    console.log(selectedColor);
     const s_color = getColorIndexByHashCode(selectedColor, colors);
+    setScolor(selectedColor);
     const notification = notificationInterval !== null ? notificationInterval : 0;
     try {
       const response = await CreatePlanRequest(
