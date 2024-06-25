@@ -17,7 +17,8 @@ const Backdrop = styled.div`
 const Modal = styled.div`
   position: fixed;
   width: 90%;
-  height: 400px;
+  max-width: 600px; /* Limiting maximum width for better readability */
+  height: auto;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -35,32 +36,31 @@ const Modal = styled.div`
 `;
 
 const Paragraph = styled.p`
-  margin: 0 0 10px 0;
+  margin: 10px 0; /* Adjusted margin for better spacing */
   font-size: 18px;
   font-weight: bold;
-  text-align: center; /* 중앙 정렬 추가 */
 `;
 
 const BlueText = styled.span`
   color: #63a1fd;
+  font-weight: bold;
 `;
 
 const StyledImage = styled.img`
   width: 80px;
   height: auto;
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increased margin for better spacing */
 `;
 
 const Text = styled.p`
-  margin: 10px 0;
+  margin: 10px 0 20px; /* Adjusted margins for better spacing */
   font-size: 14px;
   line-height: 1.5;
-  text-align: center; /* 중앙 정렬 추가 */
 `;
 
 const Button = styled.button`
   margin-top: 20px;
-  padding: 10px 20px;
+  padding: 12px 24px; /* Increased padding for button */
   background-color: #63a1fd;
   color: white;
   border: none;
@@ -73,10 +73,31 @@ const Button = styled.button`
   }
 `;
 
+const ToggleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const ToggleButton = styled.button`
+  margin: 0 8px; /* Adjusted margin for toggle buttons */
+  padding: 8px 16px;
+  background-color: ${(props) => (props.active ? "#63a1fd" : "#ddd")};
+  color: ${(props) => (props.active ? "white" : "#333")};
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background-color: ${(props) => (props.active ? "#5079c6" : "#ccc")};
+  }
+`;
+
 const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, user_id, force }) => {
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [notificationTime, setNotificationTime] = useState("00:15"); // 초기 알림 시간 설정 (00:15)
 
   useEffect(() => {
     const generateData = () => {
@@ -104,7 +125,7 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, us
           const completionRate = totalCount === 0 ? 0 : Math.round((totalSuccess / totalCount) * 100);
           const incompleteRate = totalCount === 0 ? 0 : 100 - completionRate;
           newData.push({
-            month: `${currentYear}년`,
+            month: `${currentDate}월`,
             완료율: completionRate,
             미완료율: incompleteRate,
           });
@@ -113,22 +134,42 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, us
       }
     };
     generateData();
-  }, [isActive, successCount, currentYear]);
+  }, [isActive, successCount, currentYear, currentDate]);
 
   const handleSubmit = async () => {
+    const id = localStorage.getItem("user_id");
     try {
       const response = await axios.post("http://localhost:3000/user/setForce", {
-        user_id: user_id,
+        user_id: id,
         cur_year: currentYear,
         cur_month: currentDate,
-        alarm: 1,
+        alarm: notificationTime, // 알림 시간 설정
       });
-      console.log("Response from server:", response.data);
-      localStorage.setItem("popupConfirmed", "true");
+      console.log(response);
+      // 팝업 닫기
       setShowModal(false);
     } catch (error) {
-      console.error("Error sending request:", error);
+      console.error("Error:", error);
     }
+  };
+
+  const handleToggle = (time) => {
+    setNotificationTime(time);
+  };
+
+  const renderToggleButtons = () => {
+    const buttons = [];
+    for (let minute = 15; minute < 61; minute += 15) {
+      // 15분 간격으로 버튼 생성
+      const label = `${minute < 10 ? `0${minute}` : minute}`; // 시간과 분을 포맷팅
+      const value = `${minute}`;
+      buttons.push(
+        <ToggleButton key={label} active={notificationTime === value} onClick={() => handleToggle(value)}>
+          {label}분 전
+        </ToggleButton>,
+      );
+    }
+    return buttons;
   };
 
   return (
@@ -142,25 +183,24 @@ const PerformanceChart = ({ isActive, successCount, currentYear, currentDate, us
           <Tooltip cursor={{ fill: "rgba(207, 239, 255, 0.7)" }} formatter={(value) => `${value}%`} />
           <Legend />
           <Bar dataKey="완료율" stackId="a" fill="#75b1f6" barSize={30} onClick={(data, index) => setHoveredIndex(index)} />
-          <Bar dataKey="미완료율" stackId="a" fill="#FF6347" barSize={30} onClick={(data, index) => setHoveredIndex(index)} />
+          <Bar dataKey="미완료율" stackId="a" fill="#A9A6A6" barSize={30} onClick={(data, index) => setHoveredIndex(index)} />
           <ReferenceLine y={50} stroke="#FFC2C2" strokeWidth={2} label={{ value: "50", position: "right", dy: 5 }} />
         </BarChart>
       </ResponsiveContainer>
       {showModal && (
         <Modal>
           <Paragraph>
-            {`${currentDate - 1}월의 일정 완료율이 `}
-            <BlueText>{data.length > 0 ? `${data[0].미완료율}%` : "데이터 없음"}</BlueText>
+            {`${currentDate}월의 일정 완료율이 `}
+            <BlueText>{data.length > 0 ? `${data[4].완료율}%` : "데이터 없음"}</BlueText>
             {`입니다.`}
           </Paragraph>
           <StyledImage src={character} alt="character" />
           <Text>
-            많은 일정에 알림을 설정하지 않았어요
+            많은 일정에 <BlueText>알림</BlueText>을 설정하지 않았어요
             <br />
-            오늘부터 알림을 설정해서 일정을 리마인드 해볼까요?
-            <br />
-            (오늘부터 한달 간 모든 일정에 알림이 설정됩니다.)
+            오늘부터 <BlueText>한 달간</BlueText> 모든 일정에 알림이 설정됩니다.
           </Text>
+          <ToggleContainer>{renderToggleButtons()}</ToggleContainer>
           <Button onClick={handleSubmit}>확인</Button>
         </Modal>
       )}

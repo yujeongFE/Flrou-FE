@@ -83,37 +83,39 @@ const Graph = () => {
   };
 
   return (
-    <Container>
-      <Header />
-      <Center>
-        <CenteredContent>
-          <span></span>
-        </CenteredContent>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
-          <PeriodText>
-            {(isActive === "month" || isActive === "year") && (
-              <>
-                <PriodChangeButton onClick={handlePrev}>{"< "}</PriodChangeButton>
-                <span>{getCurrentMonth()}</span>
-                <PriodChangeButton onClick={handleNext}>{" >"}</PriodChangeButton>
-              </>
-            )}
-          </PeriodText>
-          <DateTimeButton style={{ marginLeft: "auto" }}>
-            <TripleSelectButton options={["year", "month"]} onClick={handleButtonClick} activeOption={isActive} />
-          </DateTimeButton>
-        </div>
-      </Center>
-      <PerformanceChart
-        style={{ marginTop: "50px", width: "80%" }}
-        isActive={isActive}
-        currentYear={selectYear}
-        currentDate={selectMonth}
-        successCount={successCount}
-        user_id={user_id}
-      />
-      {isMobile && <BottomBar />} {/* 하단 바 추가 */}
-    </Container>
+    <>
+      <Container>
+        <Header />
+        <Center>
+          <CenteredContent>
+            <span></span>
+          </CenteredContent>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", width: "100%" }}>
+            <PeriodText>
+              {(isActive === "month" || isActive === "year") && (
+                <>
+                  <PriodChangeButton onClick={handlePrev}>{"< "}</PriodChangeButton>
+                  <span>{getCurrentMonth()}</span>
+                  <PriodChangeButton onClick={handleNext}>{" >"}</PriodChangeButton>
+                </>
+              )}
+            </PeriodText>
+            <DateTimeButton style={{ marginLeft: "auto" }}>
+              <TripleSelectButton options={["year", "month"]} onClick={handleButtonClick} activeOption={isActive} />
+            </DateTimeButton>
+          </div>
+        </Center>
+        <PerformanceChart
+          style={{ marginTop: "50px", width: "80%" }}
+          isActive={isActive}
+          currentYear={selectYear}
+          currentDate={selectMonth}
+          successCount={successCount}
+          user_id={user_id}
+        />
+        {isMobile && <BottomBar />} {/* 하단 바 추가 */}
+      </Container>
+    </>
   );
 };
 
