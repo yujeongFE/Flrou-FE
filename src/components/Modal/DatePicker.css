@@ -1,0 +1,43 @@
+.react-datepicker-wrapper {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  border-radius: 10px;
+  border: 1px solid #84b3fa;
+  background: #fff;
+  font-weight: 500;
+  height: 15px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* 헤더 전체 색상 변경 */
+.react-datepicker__header {
+  background-color: #84b3fa;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 헤더 텍스트 색상 변경 (요일명) */
+.react-datepicker__day-name {
+  color: #fff;
+}
+
+/* 헤더 텍스트 색상 변경 (달) */
+.react-datepicker__current-month {
+  color: #fff;
+}
+
+/* 선택된 날짜의 배경색 변경 */
+.react-datepicker__day--selected {
+  background-color: #aeb8fe;
+}
