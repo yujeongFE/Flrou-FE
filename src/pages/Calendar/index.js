@@ -37,22 +37,20 @@ const Calendar = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseCurrentMonth = await GetPlanRequest(id, moment(date).format("YYYY"), moment(date).format("M"));
+        const currentMonth = moment(date);
+        const previousMonth = currentMonth.clone().subtract(1, "month");
+        const nextMonth = currentMonth.clone().add(1, "month");
 
-        if (!Array.isArray(responseCurrentMonth)) {
-          console.error("데이터가 배열이 아닙니다.");
-          return;
-        }
-
-        const nextMonth = moment(date).add(1, "month");
+        const responseCurrentMonth = await GetPlanRequest(id, currentMonth.format("YYYY"), currentMonth.format("M"));
+        const responsePreviousMonth = await GetPlanRequest(id, previousMonth.format("YYYY"), previousMonth.format("M"));
         const responseNextMonth = await GetPlanRequest(id, nextMonth.format("YYYY"), nextMonth.format("M"));
 
-        if (!Array.isArray(responseNextMonth)) {
+        if (!Array.isArray(responseCurrentMonth) || !Array.isArray(responsePreviousMonth) || !Array.isArray(responseNextMonth)) {
           console.error("데이터가 배열이 아닙니다.");
           return;
         }
 
-        const allSchedules = responseCurrentMonth.concat(responseNextMonth);
+        const allSchedules = responseCurrentMonth.concat(responsePreviousMonth).concat(responseNextMonth);
 
         const secondFormatDataArray = allSchedules.map((item) => ({
           id: item.id,
