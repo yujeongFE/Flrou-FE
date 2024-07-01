@@ -10,6 +10,7 @@ import {
   StyledScheduleDetail,
   DetailContainer,
 } from "./style";
+
 import toggle_on from "../../assets/toggle_on.png";
 import toggle_off from "../../assets/toggle_off.png";
 import UpdateModal from "../../components/Modal/UpdateModal";
@@ -17,7 +18,7 @@ import { GetPlanRequest } from "../../components/api/Plan/GetPlanRequest";
 import { UpdatePlanRequest } from "../../components/api/Plan/UpdatePlanRequest";
 import { UpdatePlanDone } from "../../components/api/Plan/CompletePlanRequest";
 import { DeletePlanRequest } from "../../components/api/Plan/DeletePlanRequest";
-import xbutton from "../../assets/x_button.png";
+
 import BottomBar from "../../components/Link/BottomMenu";
 import useIsMobile from "../../hooks/useIsMobile";
 import Background from "../../layout/Background";
@@ -173,7 +174,6 @@ const Calendar = () => {
     try {
       const id = selectedSchedule.id;
       const notification = notificationInterval === null ? 15 : notificationInterval;
-      const color = colors[colorIndex];
 
       await UpdatePlanRequest(
         id,
@@ -189,14 +189,25 @@ const Calendar = () => {
         endDate.getHours(),
         endDate.getMinutes(),
         notification,
-        color,
+        colorIndex,
       );
 
       setSchedules((prevSchedules) =>
         prevSchedules.map((prevSchedule) =>
-          prevSchedule.id === selectedSchedule.id ? { ...prevSchedule, title, color, startDate, endDate } : prevSchedule,
+          prevSchedule.id === selectedSchedule.id
+            ? { ...prevSchedule, title, color: getColorByNumber(colorIndex), startDate, endDate }
+            : prevSchedule,
         ),
       );
+
+      setFilteredSchedules((prevFilteredSchedules) =>
+        prevFilteredSchedules.map((prevSchedule) =>
+          prevSchedule.id === selectedSchedule.id
+            ? { ...prevSchedule, title, color: getColorByNumber(colorIndex), startDate, endDate }
+            : prevSchedule,
+        ),
+      );
+
       setShowPopup(false);
     } catch (error) {
       console.error("일정을 업데이트하는 중 오류 발생:", error);

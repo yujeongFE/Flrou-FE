@@ -145,38 +145,7 @@ const ChattingBubble = ({
       setIsUpdateChatting(true);
     }
   }, [plan, isCalender]);
-
-  const handleSave = async (selectedColor, title, startDate, endDate, notificationInterval) => {
-    const colors = [
-      "#ff4d6d",
-      "#ffb563",
-      "#ffe66d",
-      "#9ef01a",
-      "#72efdd",
-      "#4cc9f0",
-      "#48bfe3",
-      "#3a86ff",
-      "#c77dff",
-      "#ffc6ff",
-      "#ffcfd2",
-      "#fde4cf",
-      "#fbf8cc",
-      "#b9fbc0",
-      "#98f5e1",
-      "#8eecf5",
-      "#90dbf4",
-      "#a3c4f3",
-      "#cfbaf0",
-      "#f1c0e8",
-    ];
-
-    const getColorIndexByHashCode = (hashCode, colors) => {
-      const index = colors.indexOf(hashCode);
-      return index !== -1 ? index : 3; // 기본 색상 인덱스를 3으로 설정
-    };
-
-    console.log(selectedColor);
-    const s_color = getColorIndexByHashCode(selectedColor, colors);
+  const handleSave = async (selectedColor, title, notificationInterval) => {
     setScolor(selectedColor);
     const notification = notificationInterval !== null ? notificationInterval : 0;
     try {
@@ -194,7 +163,7 @@ const ChattingBubble = ({
         plan.f_hour,
         plan.f_minute,
         notification,
-        s_color,
+        selectedColor,
       );
 
       if (response.data === "success") {
