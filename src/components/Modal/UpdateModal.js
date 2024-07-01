@@ -6,7 +6,7 @@ import detail_arrow from "../../assets/detail_arrow.png";
 import detail_close_arrow from "../../assets/detail_close_arrow.png";
 import "./DatePicker.css";
 
-const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) => {
+const UpdateModal = ({ schedule, onClose, onSave, onDelete, isPopup }) => {
   if (!schedule) return null;
   console.log(schedule);
 
@@ -16,7 +16,7 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
   const [selectedStartDate, setSelectedStartDate] = useState(new Date(schedule.startDate));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date(schedule.endDate));
   const [notificationInterval, setNotificationInterval] = useState(null);
-  const [alarm, setAlarm] = useState[schedule.alarm];
+  const [alarm, setAlarm] = useState(schedule.alarm);
 
   useEffect(() => {
     setTitle(schedule.title);
@@ -148,7 +148,7 @@ const UpdateModal = ({ schedule, index, onClose, onSave, onDelete, isPopup }) =>
 
   const handleSave = () => {
     const s_color = getColorIndexByHashCode(selectedColor, colors);
-    onSave(s_color, title, schedule.startDate, schedule.endDate, notificationInterval);
+    onSave(s_color, title, selectedStartDate, selectedEndDate, notificationInterval);
   };
 
   const handleDeleteClick = async () => {
