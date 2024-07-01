@@ -145,23 +145,38 @@ const ChattingBubble = ({
       setIsUpdateChatting(true);
     }
   }, [plan, isCalender]);
-  const handleSave = async (selectedColor, title, notificationInterval) => {
+
+  const handleSave = async (selectedColor, title, startDate, endDate, notificationInterval) => {
     setScolor(selectedColor);
     const notification = notificationInterval !== null ? notificationInterval : 0;
+
+    // Parse startDate and endDate
+    const s_year = startDate.getFullYear();
+    const s_month = startDate.getMonth() + 1; 
+    const s_day = startDate.getDate();
+    const s_hour = startDate.getHours();
+    const s_minute = startDate.getMinutes();
+
+    const f_year = endDate.getFullYear();
+    const f_month = endDate.getMonth() + 1;
+    const f_day = endDate.getDate();
+    const f_hour = endDate.getHours();
+    const f_minute = endDate.getMinutes();
+
     try {
       const response = await CreatePlanRequest(
         id,
         title,
-        plan.s_year,
-        plan.s_month,
-        plan.s_day,
-        plan.s_hour,
-        plan.s_minute,
-        plan.f_year,
-        plan.f_month,
-        plan.f_day,
-        plan.f_hour,
-        plan.f_minute,
+        s_year,
+        s_month,
+        s_day,
+        s_hour,
+        s_minute,
+        f_year,
+        f_month,
+        f_day,
+        f_hour,
+        f_minute,
         notification,
         selectedColor,
       );
